@@ -9,7 +9,7 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
 * Una vez instalado Cabal es necesario instalar la biblioteca *Random* tecleando:
 
      cabal install random    
-* [NuSMV](http://nusmv.fbk.eu/) (no hace falta instalarlo si no desea comparar desempeño).
+* [NuSMV](http://nusmv.fbk.eu/) (no es necesario instalarlo si no desea comparar desempeño).
 
 ## Modo de uso
 
