@@ -6,7 +6,7 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
 
 * [GHC (The Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
 * [Haskell Cabal](https://www.haskell.org/cabal/)
-* Una vez instalado Cabal, es necesario instalar la biblioteca *Random*. Basta teclear:
+* Una vez instalado Cabal, es necesario instalar la biblioteca *Random* tecleando:
 
      cabal install random
 
