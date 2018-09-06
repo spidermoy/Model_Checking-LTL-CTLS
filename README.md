@@ -2,6 +2,15 @@
 
 Este repositorio contiene la implementación de los algoritmos propuestos en mi tesis de maestría _«Un sencillo y eficiente verificador al vuelo para la lógica LTL y CTL★ escrito en Haskell»_.
 
+## Requisitos:
+
+* [GHC (The Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
+* [Haskell Cabal](https://www.haskell.org/cabal/)
+* Una vez instalado Cabal, es necesario instalar la biblioteca *Random*. Basta teclear:
+
+     cabal install random
+
+
 ## Modo de uso
 
 1. Compila el código tecleando: ghc -O2 Main.hs
@@ -66,19 +75,12 @@ El código está separado en módulos de la siguiente manera:
 Contiene todo lo necesario para implementar los verificadores de modelos: la definición de estructura de Kripke, fórmulas de trayectoria, fórmulas de estado, entre otras. También contiene a los verificadores *mcALTL* y *mcCTLS* que sirven para hacer verificación LTL y CTL★, respectivamente. 
 
 * **RandomForms**: Para generar fórmulas LTL y CTL aleatorias.
-
 * **RandomKS**: Para generar estructuras de Kripke de forma aleatoria.
-
 * **Binarios**: Sirve como subrutina para crear modelos aleatorios compatibles con NuSMV.
-
 * **ParserForms**: Para traducir fórmulas LTL y CTL a fórmulas compatibles con NuSMV. 
-
 * **ParserNuXmv**: Para transformar una estructura de Kripke y varias fórmulas LTL o CTL en un módulo para NuSMV.
-
 * **Exp_LTL**: Para generar experimentos LTL.
-
 * **Exp_CTL**: Para generar experimentos CTL.
-
 * **Main**: El módulo principal donde se corre el proyecto.
 
 
