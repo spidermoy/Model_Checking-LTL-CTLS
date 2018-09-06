@@ -58,7 +58,7 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
 
 donde *num_vars* = número de variables del modelo y *length_forms* = la lóngitud de las fórmulas.
 
-Por ejemplo:
+Algunos ejemplos son:
 
 * ./Main random LTL 4 3
 
