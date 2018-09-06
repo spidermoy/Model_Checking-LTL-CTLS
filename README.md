@@ -13,7 +13,7 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
 
 ## Modo de uso
 
-1. Compila el código tecleando: ghc -O2 Main.hs
+1. Se compila el código tecleando: ghc -O2 Main.hs
 2. El programa puede correrse de la siguiente manera:
 
    * Para correr un experimento aleatorio LTL:
