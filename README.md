@@ -8,8 +8,8 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
 * [Haskell Cabal](https://www.haskell.org/cabal/)
 * Una vez instalado Cabal es necesario instalar la biblioteca *Random* tecleando:
 
-     cabal install random
-
+     cabal install random    
+* [NuSMV)](http://nusmv.fbk.eu/) (no hace falta instalarlo si no desea comparar desempeño).
 
 ## Modo de uso
 
