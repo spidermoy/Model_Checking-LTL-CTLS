@@ -1,6 +1,6 @@
 # Verificación de modelos LTL y CTL★
 
-Este repositorio contiene la implementación de los algoritmos propuestos en mi tesis de maestría _«Un sencillo y eficiente verificador al vuelo para la lógica LTL y CTL★ escrito en Haskell»_.
+Este repositorio contiene la implementación de los algoritmos propuestos en mi tesis de maestría _«Un verificador sencillo y eficiente  para la lógica LTL y CTL★ escrito en Haskell»_.
 
 ## Requisitos:
 
