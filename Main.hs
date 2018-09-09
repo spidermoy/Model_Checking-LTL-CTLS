@@ -2,7 +2,7 @@ module Main where
 import Exp_LTL
 import Exp_CTL
 import System.Environment(getArgs)
-
+import InputNuSMV
 
 
 main = do 
@@ -18,6 +18,7 @@ main = do
          ["seeds",ranInit,ranNumInit,ranKS,ranF,nusmv,"CTL",n_vars,forms_n] -> experimento_seeds_CTL (map read [ranInit,ranNumInit,ranKS,ranF]) (read $ n_vars) (read $ forms_n) True
          ["tabla",n,"LTL"] -> tabla_LTL (read n);
          ["tabla",n,"CTL"] -> tabla_CTL (read n);
+         ["input",file_path] -> experimento_input file_path
          _ -> putStrLn $ "Las opciones válidas son:\n\n" ++
                          "Para correr un experimento aleatorio LTL:\n"++
                          "\trandom LTL 'num_vars' 'length_forms'\n"++

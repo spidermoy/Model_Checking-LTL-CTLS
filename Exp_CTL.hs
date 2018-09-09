@@ -39,11 +39,12 @@ experimento_random_CTL n lforms nuXmv =
                        when nuXmv $ putStr "\n\tmcCTLS:\n"; 
                        call_mcCTLS_set forms ks init; 
                        when nuXmv (do 
+                                    putStrLn "\tNuSMV:\n";
                                     start <- getCurrentTime;
                                     salida_nuXmv <- readProcess "NuSMV" ["-dcx","ejemplo_random.smv"] [];
                                     end <- getCurrentTime;
                                     let salida_nuXmv_forms = let tres_ ss = case ss of {[s1,s2,s3] -> ss;_:sss -> tres_ sss} in (concat . (map $ \s -> s++"\n") . tres_ . lines) salida_nuXmv;
-                                    putStrLn $ "\n\tNuSMV:\n" ++ salida_nuXmv_forms;
+                                    putStrLn salida_nuXmv_forms;
                                     putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start))
  
 
@@ -74,11 +75,12 @@ experimento_seeds_CTL [ranInit,ranNumInit,ranKS,ranF] n lforms nuXmv =
                        when nuXmv $ putStr "\n\tmcCTLS:\n";
                        call_mcCTLS_set forms ks init;
                        when nuXmv (do 
+                                    putStrLn "\tNuSMV:\n";
                                     start <- getCurrentTime;
                                     salida_nuXmv <- readProcess "NuSMV" ["-dcx","ejemplo_random.smv"] [];
-                                    let salida_nuXmv_forms = let tres_ ss = case ss of {[s1,s2,s3] -> ss;_:sss -> tres_ sss} in (concat . (map $ \s -> s++"\n") . tres_ . lines) salida_nuXmv;
                                     end <- getCurrentTime;
-                                    putStrLn $ "\n\tNuSMV:\n" ++ salida_nuXmv_forms;
+                                    let salida_nuXmv_forms = let tres_ ss = case ss of {[s1,s2,s3] -> ss;_:sss -> tres_ sss} in (concat . (map $ \s -> s++"\n") . tres_ . lines) salida_nuXmv;
+                                    putStrLn salida_nuXmv_forms;
                                     putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start))
 
 
