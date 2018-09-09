@@ -64,6 +64,8 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
       
       Un ejemplo del formato admitido por el verificador es:
       
+      ________________________________________________________
+      
       MODULE main
       
       VAR
@@ -110,6 +112,7 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
       
       AX AF q
       
+      ________________________________________________________
 
 Algunos ejemplos son:
 
