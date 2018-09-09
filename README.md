@@ -55,6 +55,11 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
     * Para correr _n_ experimentos CTL de forma automática:
 	    
       ./Main tabla _n_ CTL
+    
+    *Para recibir como entrada un archivo de NuSMV:
+    
+      ./Main input *filePath*
+      
 
 donde *num_vars* = número de variables del modelo y *length_forms* = la lóngitud de las fórmulas.
 
