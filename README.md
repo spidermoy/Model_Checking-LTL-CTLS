@@ -63,36 +63,53 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
       ./Main input *filePath*
       
       Un ejemplo del formato admitido por el verificador es:
-      ------------------------------------------------
+      
       MODULE main
       
       VAR
+      
+      
       p: boolean;
+      
       q: boolean;
+      
       r: boolean;
       
       DEFINE
+      
+      
       s0:=  p &  q & !r;
+      
       s1:= !p &  q &  r;
+      
       s2:= !p & !q &  r;
       
       INIT
+      
+      
       s0 | s1;
       
       TRANS
-        (s0 & next(s1|s2))
+      
+      
+      (s0 & next(s1|s2))
+      
       | (s1 & next(s0|s2)) 
+      
       | (s2 & next(s2)) 
       
       LTLSPEC  
+      
       G !(p&r)
       
       LTLSPEC  
+      
       (G F p) -> (G F r)
       
       CTLSPEC
+      
       AX AF q
-      ------------------------------------------------
+      
 
 Algunos ejemplos son:
 
