@@ -86,6 +86,7 @@ Contiene todo lo necesario para implementar los verificadores de modelos: la def
 * **ParserNuXmv**: Para transformar una estructura de Kripke y varias fórmulas LTL o CTL en un módulo para NuSMV.
 * **Exp_LTL**: Para generar experimentos LTL.
 * **Exp_CTL**: Para generar experimentos CTL.
+* **InputNuSMV**: El módulo para convertir un archivo NuSMV a uno compatible con los verificadores *mcALTL* y *mcCTL★*.
 * **Main**: El módulo principal donde se corre el proyecto.
 
 
