@@ -47,6 +47,8 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
    * Para correr un experimento CTL con semillas generadoras y comparar los resultados con NuSMV:
 
      ./Main seeds _ranInit ranNumInit ranKS ranF_ nusmv CTL *num_vars* *length_forms*
+     
+     donde *num_vars* = número de variables del modelo y *length_forms* = la lóngitud de las fórmulas.
 
     * Para correr _n_ experimentos LTL de forma automática:
 	    
@@ -60,8 +62,37 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
     
       ./Main input *filePath*
       
-
-donde *num_vars* = número de variables del modelo y *length_forms* = la lóngitud de las fórmulas.
+      Un ejemplo del formato admitido por el verificador es:
+      ------------------------------------------------
+      MODULE main
+      
+      VAR
+      p: boolean;
+      q: boolean;
+      r: boolean;
+      
+      DEFINE
+      s0:=  p &  q & !r;
+      s1:= !p &  q &  r;
+      s2:= !p & !q &  r;
+      
+      INIT
+      s0 | s1;
+      
+      TRANS
+        (s0 & next(s1|s2))
+      | (s1 & next(s0|s2)) 
+      | (s2 & next(s2)) 
+      
+      LTLSPEC  
+      G !(p&r)
+      
+      LTLSPEC  
+      (G F p) -> (G F r)
+      
+      CTLSPEC
+      AX AF q
+      ------------------------------------------------
 
 Algunos ejemplos son:
 
