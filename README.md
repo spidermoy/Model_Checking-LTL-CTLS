@@ -56,7 +56,7 @@ Este repositorio contiene la implementación de los algoritmos propuestos en mi 
 	    
       ./Main tabla _n_ CTL
     
-    *Para recibir como entrada un archivo de NuSMV:
+    * Para recibir como entrada un archivo de NuSMV:
     
       ./Main input *filePath*
       
