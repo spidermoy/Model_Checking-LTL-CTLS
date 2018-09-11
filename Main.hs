@@ -37,7 +37,7 @@ main = do
                          "Para correr un experimento CTL con semillas generadoras y generar el archivo de nusmv:\n"++
                          "\tseeds ranInit ranNumInit ranKS ranF nusmv CTL 'num_vars' 'length_forms'\n\n"++
                          "Para recibir un archivo de NuSMV como entrada:"++
-                         "\tinput 'file_path'"
+                         "\tinput 'file_path'"++
                          "donde 'num_vars'=número de variables del modelo\n      'length_forms'=la lóngitud de las fórmulas"++
                          "\n\nPara correr 'n' experimentos LTL de forma automática:\n"++
                          "\ttime ./Main tabla 'n' LTL"++
@@ -45,11 +45,3 @@ main = do
                          "\ttime ./Main tabla 'n' CTL"++
                          "\n\nEjemplo:\n./Main random nusmv LTL 7 4"
                          
-                         
-
-         
-         
-         
-         
-         
-             
