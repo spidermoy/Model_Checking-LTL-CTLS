@@ -21,6 +21,7 @@ parse_file file_path = do
            let (TransConstraint trans) = module_file !! 3;
            let parse_ors = \expr -> case expr of {BinExpr OpOr e1 e2 -> parse_ors e1 ++ parse_ors e2; e -> [e]};
            let parse_ands = \expr -> case expr of {BinExpr OpAnd e1 e2 -> parse_ors e1 ++ parse_ors e2; e -> [e]};
+           let ks_r = fmap (\[IdExpr (ComplexId (Just s) _),UnExpr OpNext s_nexts] -> (read (tail s)::Int,parse_inits s_nexts)) $ fmap parse_ands $ parse_ors trans;
            let specs = drop 4 module_file;
            let parse_LTL = \expr -> case expr of 
                                      IdExpr (ComplexId (Just p) _) -> St $ Var p
@@ -50,7 +51,6 @@ parse_file file_path = do
                                      BinExpr CTLAU e1 e2 -> A $ U (St $ parse_CTL e1) (St $ parse_CTL e2)
                                      BinExpr CTLEU e1 e2 -> E $ U (St $ parse_CTL e1) (St $ parse_CTL e2)
            let specs_module = fmap (\expr -> case expr of {LTLSpec e' -> Left $ parse_LTL e';CTLSpec e' -> Right $ parse_CTL e'}) specs; 
-           let ks_r = fmap (\[IdExpr (ComplexId (Just s) _),UnExpr OpNext s_nexts] -> (read (tail s)::Int,parse_inits s_nexts)) $ fmap parse_ands $ parse_ors trans;
            let kripS = KS (2^(length vars)::Int,crea_r ks_r,crea_l ks_l) where
                                              crea_r [] = (\_ -> []) 
                                              crea_r ((r,r_nexts):rs) = \s -> if s==r then r_nexts else crea_r rs s
