@@ -132,7 +132,6 @@ Contiene todo lo necesario para implementar los verificadores de modelos: la def
 
 * **RandomForms**: Para generar fórmulas LTL y CTL aleatorias.
 * **RandomKS**: Para generar estructuras de Kripke de forma aleatoria.
-* **Binarios**: Sirve como subrutina para crear modelos aleatorios compatibles con NuSMV.
 * **ParserForms**: Para traducir fórmulas LTL y CTL a fórmulas compatibles con NuSMV. 
 * **ParserNuXmv**: Para transformar una estructura de Kripke y varias fórmulas LTL o CTL en un módulo para NuSMV.
 * **Exp_LTL**: Para generar experimentos LTL.
