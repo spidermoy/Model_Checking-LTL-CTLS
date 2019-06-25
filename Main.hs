@@ -21,11 +21,11 @@ main = do
                                  "CTL"  -> random_experiment CTL  (read n_vars) (read forms_n) nuXmv
       seeds_exp ranInit ranNumInit ranKS ranF experiment n_vars forms_n nuXmv =
           case experiment of
-            "LTL"  -> seeds_experiment LTL  (map read [ranInit, ranNumInit, ranKS, ranF]) 
-                                                                (read n_vars) (read forms_n) nuXmv
-            "LTLc" -> seeds_experiment LTLc (map read [ranInit, ranNumInit, ranKS, ranF]) 
-                                                                (read n_vars) (read forms_n) nuXmv
-            "CTL"  -> seeds_experiment CTL  (map read [ranInit, ranNumInit, ranKS, ranF]) 
-                                                                (read n_vars) (read forms_n) nuXmv
+            "LTL"  -> seeds_experiment LTL  (map read [ranInit, ranNumInit, ranKS, ranF])
+                                                                  (read n_vars) (read forms_n) nuXmv
+            "LTLc" -> seeds_experiment LTLc (map read [ranInit, ranNumInit, ranKS, ranF])
+                                                                  (read n_vars) (read forms_n) nuXmv
+            "CTL"  -> seeds_experiment CTL  (map read [ranInit, ranNumInit, ranKS, ranF])
+                                                                  (read n_vars) (read forms_n) nuXmv
 
 

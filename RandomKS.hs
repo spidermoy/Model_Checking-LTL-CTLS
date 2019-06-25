@@ -14,7 +14,7 @@ randomKS n rs = KS (2^n - 1, r_random, l_random)
       l_random s pj = if pj == ""
                       then False
                       else let bss = statesbin n
-                               k = (read . tail) pj in
+                               k   = (read . tail) pj in
                            (bss !! s) !! k
 
 

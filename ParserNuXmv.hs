@@ -5,7 +5,7 @@ import ParserForms
 
 write_nuxmvLTL::KripkeS->[State]->[State]->[String]->[PathF]->Int->[Int]->IO ()
 write_nuxmvLTL ks@(KS (nstates,r,l)) states init vars forms lforms [ranInit,ranNumInit,ranKS,ranF] =
-    writeFile "ejemplo_random.smv" 
+    writeFile smv_output
         (("-- Semilla init: " ++ show ranInit)++("\n-- Semilla NumInit: " ++ show ranNumInit) ++ ("\n-- Semilla KS: " ++ show ranKS) ++ ("\n-- Semilla F: " ++ show ranF)++("\n-- Longitud fórmulas: "++show lforms)++"\n\n\n"++
         "MODULE main\n\n" ++
         "VAR\n"++ let f = \vs -> case vs of {[v] -> v++": boolean;\n\n\n";w:ws -> w++": boolean;\n"++f ws} in f vars ++
@@ -17,7 +17,7 @@ write_nuxmvLTL ks@(KS (nstates,r,l)) states init vars forms lforms [ranInit,ranN
 
 write_nuxmvCTL::KripkeS->[State]->[State]->[String]->[StateF]->Int->[Int]->IO ()
 write_nuxmvCTL ks@(KS (nstates,r,l)) states init vars forms lforms [ranInit,ranNumInit,ranKS,ranF] =
-    writeFile "ejemplo_random.smv" 
+    writeFile smv_output
         (("-- Semilla init: " ++ show ranInit)++("\n-- Semilla NumInit: " ++ show ranNumInit) ++ ("\n-- Semilla KS: " ++ show ranKS) ++ ("\n-- Semilla F: " ++ show ranF)++("\n-- Longitud fórmulas: "++show lforms)++"\n\n\n"++
         "MODULE main\n\n" ++
         "VAR\n"++ let f = \vs -> case vs of {[v] -> v++": boolean;\n\n\n";w:ws -> w++": boolean;\n"++f ws} in f vars ++
