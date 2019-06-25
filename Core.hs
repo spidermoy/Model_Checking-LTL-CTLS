@@ -54,9 +54,9 @@ negS φ = case φ of
 
 negP::PathF->PathF
 negP ф = case ф of
-           St φ      -> St $ negS φ 
-           ConjP ф₁ ф₂ -> DisyP (negP ф₁) (negP ф₂)
-           DisyP ф₁ ф₂ -> ConjP (negP ф₁) (negP ф₂)
+           St φ       -> St $ negS φ 
+           ConjP ф₁ ф₂  -> DisyP (negP ф₁) (negP ф₂)
+           DisyP ф₁ ф₂  -> ConjP (negP ф₁) (negP ф₂)
            X ф₁             -> X $ negP ф₁
            U ф₁ ф₂         -> R (negP ф₁) (negP ф₂)
            R ф₁ ф₂         -> U (negP ф₁) (negP ф₂)
@@ -80,24 +80,25 @@ opG ф = case ф of
 opF::PathF->PathF
 opF ф = case ф of
           -- FFф ≡ Fф
-          U (St (Neg "")) ф₁                                      -> opF ф₁
+          U (St (Neg "")) ф₁ -> opF ф₁
           -- FGFф ≡ GFф
           R (St (Var "")) (U (St (Neg "")) ф₁) -> opG $ opF ф₁
-          _                                    -> U (St top) ф
+          _ -> U (St top) ф
 
 -- Implication Operator
 impS::StateF->StateF->StateF
-impS φ₁ φ₂ = if φ₁ == φ₂
+impS φ₁ φ₂ = if   φ₁ == φ₂
            then top
            else DisyS (negS φ₁) φ₂
 
 impP::PathF->PathF->PathF
-impP ф₁ ф₂ = if ф₁ == ф₂ 
+impP ф₁ ф₂ = if   ф₁ == ф₂ 
            then St top
            else DisyP (negP ф₁) ф₂
 
 
 data Assertion = Assrt (State, Set PathF) deriving (Eq, Ord)
+
 
 --Borra una fórmula de una aserción 
 deleteF::PathF->Assertion->Assertion
@@ -299,45 +300,6 @@ smv_output = "/home/moy/nuXmv/bin/ejemplo_random.smv"
  ******************
  * DATA INSTANCES *
  ****************** -}
-
---showL::Int->String
-showL n = [filter ("" /=) $
-           fmap (\(i, state) -> if state 
-                                then "p" ++ show i
-                                else "") $ zip [0 .. n-1] state | state <- statesbin n]
-
-
-instance Show KripkeS where
-   show (KS (n, r, l)) = "{" ++ 
-                     concat ["\nR s" ++ show s ++ " ↦ " ++ (show $ r s) | s <- [0 .. n]] ++ "\n" ++
-                         "}\n"
-
-
-statesbin::Int->[[Bool]]
-statesbin n = fmap (completeZeros n) $ take (2^n) bins
-   where
-      bins = [False] : nexts bins 
-      nexts (b:bs) = (sucB b) : nexts bs
-      sucB []         = [True]
-      sucB (False:bs) = True:bs 
-      sucB (True:bs)  = False : sucB bs
-      completeZeros n bs = let m = length bs in
-                           if m < n 
-                           then bs++(replicate (n-m) False) 
-                           else bs
-
-showKS::KripkeS->String
-showKS (KS (n, r, l)) = let records = showL (round $ logBase 2 (fromIntegral n) :: Int) in
-                         "{" ++ 
-                           concat ["\nR s" ++ show s ++ " ↦ " ++ (show $ r s) ++ "\n" ++
-                                     "L s" ++ show s ++ " ↦ " ++ (show $ records !! s) ++ "\n"
-                                                                                | s <- [0 .. n]] ++
-                         "}\n"
-
-
-instance Eq KripkeS where
-      (==) (KS (n, r1, _)) (KS (_, r2, _)) = [r1 s | s <- [0 .. n]] == [r2 s | s <- [0 .. n]]
-
 
 instance Show Assertion where
    show (Assrt (s,_Φ)) = "s" ++ show s ++ " ⊢ " ++ (show $ toList _Φ)

@@ -19,5 +19,21 @@ randomKS n rs = KS (2^n - 1, r_random, l_random)
 
 
 
+statesbin::Int->[[Bool]]
+statesbin n = fmap (completeZeros n) $ take (2^n) bins
+   where
+      bins = [False] : nexts bins 
+      nexts (b:bs) = (sucB b) : nexts bs
+      sucB []         = [True]
+      sucB (False:bs) = True:bs 
+      sucB (True:bs)  = False : sucB bs
+      completeZeros n bs = let m = length bs in
+                           if m < n 
+                           then bs++(replicate (n-m) False) 
+                           else bs
+
+
+
+
 
 
