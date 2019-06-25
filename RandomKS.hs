@@ -9,7 +9,7 @@ randomKS::Int->[Int]->KripkeS
 randomKS n rs = KS (2^n - 1, r_random, l_random)
    where
       r_random s    = let g = mkStdGen (rs !! s) 
-                          m = fst $ randomR (1, 2^n) g in
+                          m = fst $ randomR (1, n^2) g in
                       (sort . nub . take m) $ randomRs (0, 2^n - 1) g
       l_random s pj = if pj == ""
                       then False
