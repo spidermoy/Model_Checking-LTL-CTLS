@@ -24,7 +24,7 @@ randomFormsLTL n m s = let vars = ["p"++show j | j<-[0..m-1]]
                                               6 -> R (randF tipF indV vars (k+6) (m+7) (n-1)) (randF tipF indV vars (k+1) (m+2) (n-1))
                                               
 
---Dados n,m,s, crea fórmulas CTL aleatorias de longitud n con m variables utilizando la semilla s.     
+--Dados n,m,s, crea fórmulas CTL aleatorias de longitud n con m variables utilizando la semilla s.
 randomFormsCTL::Int->Int->Int->[StateF]
 randomFormsCTL n m s = let vars = ["p"++show j | j<-[0..m-1]] 
                            tipF = randomRs (0,9) (mkStdGen s) :: [Int] 
@@ -48,4 +48,3 @@ randomFormsCTL n m s = let vars = ["p"++show j | j<-[0..m-1]]
                                               9 -> E $ opF $ St $ randF tipF indV vars (k+7) (m+7) (n-1)
 
 
-                                              

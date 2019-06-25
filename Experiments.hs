@@ -15,7 +15,6 @@ import ParserNuXmv
 data TypeExperiment = LTL | LTLc | CTL
 
 
-
 seeds_experiment::TypeExperiment->[Int]->Int->Int->Bool->IO ()
 seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
    let vars                 = ["p" ++ show j | j <- [0 .. n - 1]]

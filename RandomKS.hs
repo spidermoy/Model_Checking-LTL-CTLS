@@ -18,7 +18,6 @@ randomKS n rs = KS (2^n - 1, r_random, l_random)
                            (bss !! s) !! k
 
 
-
 statesbin::Int->[[Bool]]
 statesbin n = fmap (completeZeros n) $ take (2^n) bins
    where
@@ -31,9 +30,4 @@ statesbin n = fmap (completeZeros n) $ take (2^n) bins
                            if m < n 
                            then bs++(replicate (n-m) False) 
                            else bs
-
-
-
-
-
 
