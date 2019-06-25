@@ -1,9 +1,3 @@
-{-
- ****************************
- * LTL & CTL MODEL CHECKING *
- **************************** -}
-
-
 module Core where
 
 import Data.Set(Set, singleton, delete, insert, map, empty, elemAt, fromList, toList, member)
