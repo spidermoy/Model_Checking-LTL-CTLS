@@ -66,7 +66,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                  call_LTLmodelChecker forms ks init
                  when nuXmv (do
                     putStrLn "[Creando archivo para nuXmv...]"
-                    write_nuxmvLTL ks states init vars forms lforms [ranInit, ranNumInit, ranKS, ranF]
+                    write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
                     putStrLn "\n\tnuXmv:\n"
                     start        <- getCurrentTime
@@ -85,7 +85,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                   call_LTLmodelChecker_CounterExample forms ks init
                   when nuXmv (do
                     putStrLn "[Creando archivo para nuXmv...]"
-                    write_nuxmvLTL ks states init vars forms lforms [ranInit, ranNumInit, ranKS, ranF]
+                    write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
                     putStrLn "\n\tnuXmv:"
                     start        <- getCurrentTime
@@ -103,7 +103,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                   call_CTLmodelChecker forms ks init
                   when nuXmv (do
                     putStrLn "[Creando archivo para nuXmv...]"
-                    write_nuxmvCTL ks states init vars forms lforms [ranInit, ranNumInit, ranKS, ranF]
+                    write_nuxmv ks states init vars (Right forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
                     putStrLn "\n\tnuXmv:\n"
                     start        <- getCurrentTime
