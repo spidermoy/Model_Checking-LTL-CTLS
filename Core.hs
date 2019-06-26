@@ -223,18 +223,18 @@ mcALTLc ks σ = dfs ks σ []
                                          bs <- sequence [dfs ks σ₁ (σ:stack) | σ₁ <- σs]
                                          return (and bs)
      finiteC ((Assrt (s, _Φ)):stack) = error $ "\n\n\tFinite counterexample:\n\n" ++
-                                               "s" ++ show s ++ " ⊬ " ++ (show $ toList _Φ) ++ "\n" 
-                                               ++ concat [show σ ++ "\n" | σ <- filter (\(Assrt (s, _)) -> s >= 0) stack]
-     cycleC (σ:stack)                = error $ "\n\n\tU-Cycle detected:\n\n" ++
-                                       concat [if σ_ == σ
-                                               then "--> " ++ show σ_ ++ "\n"
-                                               else "    " ++ show σ_ ++ "\n" | σ_ <- filter (\(Assrt (s, _)) -> s >= 0) (σ:stack)]
+                                        "s" ++ show s ++ " ⊬ " ++ (show $ toList _Φ) ++ "\n" ++
+                                        concat [show σ ++ "\n" | σ <- filter (\(Assrt (s, _)) -> s >= 0) stack]
+     cycleC (σ:stack) = error $ "\n\n\tU-Cycle detected:\n\n" ++
+                        concat [if σ_ == σ
+                                then "--> " ++ show σ_ ++ "\n"
+                                else "    " ++ show σ_ ++ "\n" | σ_ <- filter (\(Assrt (s, _)) -> s >= 0) (σ:stack)]
 
 
 eval_mcALTLc::KripkeS->Assertion->IO ()
 eval_mcALTLc ks σ = catch
                       (print $ evalStateM (mcALTLc ks σ) empty)
-                      (\(ErrorCall counterexampleP) -> putStrLn counterexampleP)
+                      (\(ErrorCall counterexample) -> putStrLn counterexample)
 
 
 mcALTLc_set::KripkeS->[State]->PathF->IO ()
@@ -252,7 +252,7 @@ insert_Vs p = ST $ \v -> ((), insert p v)
 
 
 mcCTLS::KripkeS->(State, StateF)->StateM Vs Bool
-mcCTLS ks@(KS (_, _, l)) (s, φ) = 
+mcCTLS ks@(KS (_, _, l)) (s, φ) =
    do
     s_φ_in_Vs <- elem_Vs (s, φ)
     if s_φ_in_Vs 

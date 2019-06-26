@@ -27,7 +27,7 @@ statesbin n = fmap (completeZeros n) $ take (2^n) bins
       sucB (False:bs) = True:bs 
       sucB (True:bs)  = False : sucB bs
       completeZeros n bs = let m = length bs in
-                           if m < n 
-                           then bs++(replicate (n-m) False)
+                           if   m < n 
+                           then bs ++ (replicate (n-m) False)
                            else bs
 

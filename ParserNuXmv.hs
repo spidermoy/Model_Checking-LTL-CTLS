@@ -4,13 +4,13 @@ import ParserForms
 
 
 write_nuxmv::KripkeS->[State]->[State]->[String]->Either [PathF] [StateF]->Int->[Int]->IO ()
-write_nuxmv ks@(KS (nstates,r,l)) states init vars forms lforms [ranInit,ranNumInit,ranKS,ranF] =
+write_nuxmv ks@(KS (_, r, l)) states init vars forms lforms [ranInit, ranNumInit, ranKS, ranF] =
     writeFile smv_output
-        (("-- Semilla init: " ++ show ranInit) ++
-         ("\n-- Semilla NumInit: " ++ show ranNumInit) ++
-         ("\n-- Semilla KS: " ++ show ranKS) ++
-         ("\n-- Semilla F: " ++ show ranF) ++
-         ("\n-- Longitud fórmulas: "++show lforms)++"\n\n\n"++
+        (  ("-- Semilla init: "      ++ show ranInit)    ++
+         ("\n-- Semilla NumInit: "   ++ show ranNumInit) ++
+         ("\n-- Semilla KS: "        ++ show ranKS)      ++
+         ("\n-- Semilla F: "         ++ show ranF)       ++
+         ("\n-- Longitud fórmulas: " ++ show lforms)     ++ "\n\n\n" ++
         "MODULE main\n\n" ++
         "VAR\n"++ let f = \vs -> case vs of
                                    [v]  -> v ++ ": boolean;\n\n\n"
@@ -33,7 +33,7 @@ write_nuxmv ks@(KS (nstates,r,l)) states init vars forms lforms [ranInit,ranNumI
                                        s':ss -> "s" ++ show s' ++ "|" ++ g ss in
                      let f = \sts -> case sts of 
                                        [s]   -> "(s" ++ show s ++ " & next(" ++ (g . r) s ++ "))\n\n"
-                                       s':ss -> "(s" ++ show s' ++ " & next(" ++ (g . r) s' ++ ")) |\n" ++ f ss in 
+                                       s':ss -> "(s" ++ show s' ++ " & next(" ++ (g . r) s' ++ ")) |\n" ++ f ss in
                      f states ++ (case forms of
                                     Left  ltl_forms -> pathFormsToFile  ltl_forms
                                     Right ctl_forms -> stateFormsToFile ctl_forms))

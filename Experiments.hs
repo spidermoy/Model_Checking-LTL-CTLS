@@ -14,6 +14,18 @@ import ParserNuXmv
 
 data TypeExperiment = LTL | LTLc | CTL
 
+random_experiment::TypeExperiment->Int->Int->Bool->IO ()
+random_experiment experiment n lforms nuXmv = do
+   ranInit    <- randomIO
+   ranNumInit <- randomIO
+   ranKS      <- randomIO
+   ranF       <- randomIO
+   putStrLn $ " Semilla init: "    ++ show ranInit
+   putStrLn $ " Semilla NumInit: " ++ show ranNumInit
+   putStrLn $ " Semilla KS: "      ++ show ranKS
+   putStrLn $ " Semilla F: "       ++ show ranF
+   seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv
+
 
 seeds_experiment::TypeExperiment->[Int]->Int->Int->Bool->IO ()
 seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
@@ -51,8 +63,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
    in do
        let suc_ks                  = randoms (mkStdGen ranKS) :: [Int]
            k                       = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
-           init                    = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int)
-                                                                                 (mkStdGen ranInit)
+           init                    = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
            states                  = [0 .. (2^n - 1)]
            ks@(KS (nstates, r, l)) = randomKS n suc_ks
        putStrLn $ "\nMODELO ALEATORIO DE TAMAÑO 2^" ++ show n
@@ -115,18 +126,5 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                                              (concat . (map $ \s -> s++"\n") . tres_ . lines) salida_nuXmv
                     putStrLn salida_nuXmv_forms
                     putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start))
-
-
-random_experiment::TypeExperiment->Int->Int->Bool->IO ()
-random_experiment experiment n lforms nuXmv = do
-   ranInit    <- randomIO
-   ranNumInit <- randomIO
-   ranKS      <- randomIO
-   ranF       <- randomIO
-   putStrLn $ " Semilla init: "    ++ show ranInit
-   putStrLn $ " Semilla NumInit: " ++ show ranNumInit
-   putStrLn $ " Semilla KS: "      ++ show ranKS
-   putStrLn $ " Semilla F: "       ++ show ranF
-   seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv
 
 
