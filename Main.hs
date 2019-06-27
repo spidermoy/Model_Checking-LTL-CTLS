@@ -13,6 +13,7 @@ main = do
                           -> seeds_exp ranInit ranNumInit ranKS ranF experiment n_vars forms_n True
       ["seeds", ranInit, ranNumInit, ranKS, ranF, experiment, n_vars, forms_n]
                           -> seeds_exp ranInit ranNumInit ranKS ranF experiment n_vars forms_n False
+      ["thesis_experiments"] -> thesis_experiments
       _ -> putStrLn "Invalid arguments"
     where
       random_exp experiment n_vars forms_n nuXmv = case experiment of

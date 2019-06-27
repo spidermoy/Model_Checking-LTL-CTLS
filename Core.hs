@@ -55,12 +55,14 @@ negP ф = case ф of
            U ф₁ ф₂         -> R (negP ф₁) (negP ф₂)
            R ф₁ ф₂         -> U (negP ф₁) (negP ф₂)
 
+
 -- Bot and Top
 bot::StateF
 bot = Var ""
 
 top::StateF
 top = Neg ""
+
 
 -- Gф and Fф 
 opG::PathF->PathF
@@ -89,6 +91,7 @@ impP::PathF->PathF->PathF
 impP ф₁ ф₂ = if   ф₁ == ф₂ 
            then St top
            else DisyP (negP ф₁) ф₂
+
 
 
 data Assertion = Assrt (State, Set PathF) deriving (Eq, Ord)
@@ -242,7 +245,7 @@ mcALTLc_set ks ss ф = let ks' = upd_r ks (-1) ss in
                       eval_mcALTLc ks' (Assrt (-1, singleton $ X ф))
 
 
-type Vs = Set (State,StateF)
+type Vs = Set (State, StateF)
 
 elem_Vs::(State,StateF)->StateM Vs Bool
 elem_Vs p = ST $ \v -> (member p v, v)
