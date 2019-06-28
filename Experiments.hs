@@ -3,7 +3,7 @@ module Experiments where
 import Data.List(sort, nub)
 import Data.Set(singleton)
 import System.Random(mkStdGen, randomIO, randoms, randomR, randomRIO, randomRs)
-import Control.Monad(when, forM_)
+import Control.Monad(forM_)
 import Data.Time(getCurrentTime, diffUTCTime)
 import System.Process(readProcess)
 
@@ -67,41 +67,50 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
          LTL  -> let forms = sort $ randomFormsLTL lforms n ranF in
                 do
                  putStrLn $ "Forms: " ++ show forms
-                 when nuXmv (do
+                 if   nuXmv
+                 then do
                     putStrLn "[Creando archivo para nuXmv...]"
                     write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
-                    )
-                 putStrLn "\n\tmcALTL:\n"
-                 call_LTLmodelChecker forms ks init
-                 when nuXmv nuXmv_experiment
+                    putStrLn "\n\tmcALTL:\n"
+                    call_LTLmodelChecker forms ks init
+                    nuXmv_experiment
+                 else do
+                    putStrLn "\n\tmcALTL:\n"
+                    call_LTLmodelChecker forms ks init
          LTLc -> let forms = sort $ randomFormsLTL lforms n ranF in
                  do
                   putStrLn $ "Forms: " ++ show forms ++ "\n"
-                  when nuXmv (do
+                  if   nuXmv
+                  then do
                     putStrLn "[Creando archivo para nuXmv...]"
                     write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
-                    )
-                  putStrLn "\n\tmcALTLc:\n"
-                  call_LTLmodelChecker_CounterExample forms ks init
-                  when nuXmv nuXmv_experiment
+                    putStrLn "\n\tmcALTLc:\n"
+                    call_LTLmodelChecker_CounterExample forms ks init
+                    nuXmv_experiment
+                  else do
+                    putStrLn "\n\tmcALTLc:\n"
+                    call_LTLmodelChecker_CounterExample forms ks init
          CTL  -> let forms = sort $ randomFormsCTL lforms n ranF in
                  do
                   putStrLn $ "Forms: " ++ show forms
-                  when nuXmv (do
+                  if   nuXmv
+                  then do
                     putStrLn "[Creando archivo para nuXmv...]"
                     write_nuxmv ks states init vars (Right forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
-                    )
-                  putStrLn "\n\tmcCTLS:\n"
-                  call_CTLmodelChecker forms ks init
-                  when nuXmv nuXmv_experiment
+                    putStrLn "\n\tmcCTLS:\n"
+                    call_CTLmodelChecker forms ks init
+                    nuXmv_experiment
+                  else do
+                    putStrLn "\n\tmcCTL:\n"
+                    call_CTLmodelChecker forms ks init
     where
       nuXmv_experiment = do
                     putStrLn "\tnuXmv:"
                     start        <- getCurrentTime
-                    salida_nuXmv <- readProcess nuXmv_path ["-dcx",smv_output] []
+                    salida_nuXmv <- readProcess nuXmv_path ["-dcx", smv_output] []
                     end          <- getCurrentTime
                     let salida_nuXmv_forms = let nuXmv_out_lines = lines salida_nuXmv
                                                  nuXmv_out       = drop 26 nuXmv_out_lines in
@@ -172,9 +181,6 @@ thesis_experiments = do
     seeds_experiment CTL [-3020335431298968450, -1085283208950323474, 7907697534437260499, 1709226432342667921] 19 2 False
     putStrLn "15)"
     seeds_experiment CTL [6830968738545262399, -7400582486838530919, -5225068410809829748, 4640882333315414212] 20 2 False
-
-
-
 
 
 
