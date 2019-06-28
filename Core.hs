@@ -206,12 +206,12 @@ mcALTLc ks σ = dfs ks σ []
      dfs::KripkeS->Assertion->[Assertion]->StateM Vp Bool
      dfs ks σ stack = do
          σ_in_Vp <- elem_Vp σ
-         if σ_in_Vp
+         if   σ_in_Vp
          then return True
-         else if elem σ stack
+         else if   elem σ stack
               then do
                     let stack' = σ : takeWhile (σ/=) stack
-                    if check_success stack'
+                    if   check_success stack'
                     then do
                           forM_ stack' insert_Vp
                           return True
@@ -285,7 +285,6 @@ eval_mcCTLS ks (s, φ) = evalStateM (mcCTLS ks (s, φ)) empty
 mcCTLS_set::(KripkeS,[State])->StateF->Bool
 mcCTLS_set (ks,ss) φ = let ks' = upd_r ks (-1) ss in
                        eval_mcCTLS ks' (-1, (A . X) $ St φ)
-
 
 
 -- nuXmv local ubication

@@ -3,7 +3,7 @@ module Experiments where
 import Data.List(sort, nub)
 import Data.Set(singleton)
 import System.Random(mkStdGen, randomIO, randoms, randomR, randomRIO, randomRs)
-import Control.Monad(when)
+import Control.Monad(when, forM_)
 import Data.Time(getCurrentTime, diffUTCTime)
 import System.Process(readProcess)
 
@@ -30,36 +30,30 @@ random_experiment experiment n lforms nuXmv = do
 seeds_experiment::TypeExperiment->[Int]->Int->Int->Bool->IO ()
 seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
    let vars                 = ["p" ++ show j | j <- [0 .. n - 1]]
-       call_LTLmodelChecker = \fs ks ss -> case fs of
-                                        []   -> putStrLn ""
-                                        g:gs -> do
+       call_LTLmodelChecker = \fs ks ss -> forM_ fs (\f -> do
                                             start <- getCurrentTime
-                                            putStr $ show g ++ " : " ++
-                                                     show (mcALTL_set ks ss g)
+                                            putStr $ show f ++ " : " ++
+                                                     show (mcALTL_set ks ss f)
                                             end   <- getCurrentTime
                                             putStrLn $ "\n\tTiempo de verificación: " ++
                                                        (show $ diffUTCTime end start) ++ "\n"
-                                            call_LTLmodelChecker gs ks ss
-       call_LTLmodelChecker_CounterExample = \fs ks ss -> case fs of
-                                        []   -> putStrLn ""
-                                        g:gs -> do
+                                                )
+       call_LTLmodelChecker_CounterExample = \fs ks ss -> forM_ fs (\f -> do
                                             start <- getCurrentTime
-                                            putStr $ show g ++ " : "
-                                            mcALTLc_set ks ss g
+                                            putStr $ show f ++ " : "
+                                            mcALTLc_set ks ss f
                                             end   <- getCurrentTime
                                             putStrLn $ "\n\tTiempo de verificación: " ++
                                                        (show $ diffUTCTime end start) ++ "\n"
-                                            call_LTLmodelChecker_CounterExample gs ks ss
-       call_CTLmodelChecker = \fs ks ss -> case fs of
-                                        []   -> putStrLn ""
-                                        g:gs -> do
+                                                )
+       call_CTLmodelChecker = \fs ks ss -> forM_ fs (\f -> do
                                             start <- getCurrentTime
-                                            putStr $ show g ++ " : " ++ 
-                                                     show (mcCTLS_set (ks, ss) g)
+                                            putStr $ show f ++ " : " ++
+                                                     show (mcCTLS_set (ks, ss) f)
                                             end   <- getCurrentTime
                                             putStrLn $ "\n\tTiempo de verificación: " ++
                                                        (show $ diffUTCTime end start) ++ "\n"
-                                            call_CTLmodelChecker gs ks ss
+                                                )
    in do
        let suc_ks                  = randoms (mkStdGen ranKS) :: [Int]
            k                       = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
