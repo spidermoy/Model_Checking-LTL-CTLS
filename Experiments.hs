@@ -43,7 +43,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                                             putStr $ show f ++ " : "
                                             mcALTLc_set ks ss f
                                             end   <- getCurrentTime
-                                            putStrLn $ "\n\tTiempo de verificación: " ++
+                                            putStrLn $ "\tTiempo de verificación: " ++
                                                        (show $ diffUTCTime end start) ++ "\n"
                                                 )
        call_CTLmodelChecker = \fs ks ss -> forM_ fs (\f -> do
@@ -67,59 +67,47 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
          LTL  -> let forms = sort $ randomFormsLTL lforms n ranF in
                 do
                  putStrLn $ "Forms: " ++ show forms
-                 putStrLn "\n\tmcALTL:\n"
-                 call_LTLmodelChecker forms ks init
                  when nuXmv (do
                     putStrLn "[Creando archivo para nuXmv...]"
                     write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
-                    putStrLn "\n\tnuXmv:\n"
-                    start        <- getCurrentTime
-                    salida_nuXmv <- readProcess nuXmv_path ["-dcx",smv_output] []
-                    end          <- getCurrentTime
-                    let salida_nuXmv_forms = let tres_ ss = case ss of
-                                                              [s1,s2,s3] -> ss
-                                                              _:sss      -> tres_ sss in
-                                             (concat . (map $ \s -> s++"\n") . tres_ . lines) salida_nuXmv
-                    putStrLn salida_nuXmv_forms
-                    putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start))
+                    )
+                 putStrLn "\n\tmcALTL:\n"
+                 call_LTLmodelChecker forms ks init
+                 when nuXmv nuXmv_experiment
          LTLc -> let forms = sort $ randomFormsLTL lforms n ranF in
                  do
                   putStrLn $ "Forms: " ++ show forms ++ "\n"
-                  putStrLn "\n\tmcALTLc:\n"
-                  call_LTLmodelChecker_CounterExample forms ks init
                   when nuXmv (do
                     putStrLn "[Creando archivo para nuXmv...]"
                     write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[Archivo creado]"
-                    putStrLn "\n\tnuXmv:"
+                    )
+                  putStrLn "\n\tmcALTLc:\n"
+                  call_LTLmodelChecker_CounterExample forms ks init
+                  when nuXmv nuXmv_experiment
+         CTL  -> let forms = sort $ randomFormsCTL lforms n ranF in
+                 do
+                  putStrLn $ "Forms: " ++ show forms
+                  when nuXmv (do
+                    putStrLn "[Creando archivo para nuXmv...]"
+                    write_nuxmv ks states init vars (Right forms) lforms [ranInit, ranNumInit, ranKS, ranF]
+                    putStrLn "[Archivo creado]"
+                    )
+                  putStrLn "\n\tmcCTLS:\n"
+                  call_CTLmodelChecker forms ks init
+                  when nuXmv nuXmv_experiment
+    where
+      nuXmv_experiment = do
+                    putStrLn "\tnuXmv:"
                     start        <- getCurrentTime
-                    salida_nuXmv <- readProcess nuXmv_path [smv_output] []
+                    salida_nuXmv <- readProcess nuXmv_path ["-dcx",smv_output] []
                     end          <- getCurrentTime
                     let salida_nuXmv_forms = let nuXmv_out_lines = lines salida_nuXmv
                                                  nuXmv_out       = drop 26 nuXmv_out_lines in
                                              concat [l ++ "\n" | l <- nuXmv_out]
                     putStrLn salida_nuXmv_forms
-                    putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start))
-         CTL  -> let forms = sort $ randomFormsCTL lforms n ranF in
-                 do
-                  putStrLn $ "Forms: " ++ show forms
-                  putStrLn "\n\tmcCTLS:\n"
-                  call_CTLmodelChecker forms ks init
-                  when nuXmv (do
-                    putStrLn "[Creando archivo para nuXmv...]"
-                    write_nuxmv ks states init vars (Right forms) lforms [ranInit, ranNumInit, ranKS, ranF]
-                    putStrLn "[Archivo creado]"
-                    putStrLn "\n\tnuXmv:\n"
-                    start        <- getCurrentTime
-                    salida_nuXmv <- readProcess nuXmv_path ["-dcx",smv_output] []
-                    end          <- getCurrentTime
-                    let salida_nuXmv_forms = let tres_ ss = case ss of
-                                                              [s1,s2,s3] -> ss
-                                                              _:sss      -> tres_ sss in
-                                             (concat . (map $ \s -> s++"\n") . tres_ . lines) salida_nuXmv
-                    putStrLn salida_nuXmv_forms
-                    putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start))
+                    putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start)
 
 
 thesis_experiments::IO ()
