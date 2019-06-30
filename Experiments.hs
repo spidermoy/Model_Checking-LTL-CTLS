@@ -30,16 +30,16 @@ random_experiment experiment n lforms nuXmv = do
 
 seeds_experiment::TypeExperiment->[Int]->Int->Int->Bool->IO ()
 seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
-   let vars                 = ["p" ++ show j | j <- [0 .. n - 1]]
+   let vars                 = ["p" ++ show j | j <- [0 .. n-1]]
        call_LTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
-                                          putMVar str $ show f ++ " : " ++ show (mcALTL_set ks ss f)
+                                          putMVar str $! show f ++ " : " ++ show (mcALTL_set ks ss f)
                                                 )
        call_LTLmodelChecker_CounterExample = \fs ks ss -> forM_ fs (\f -> do
                                             putStr $ show f ++ " : "
                                             mcALTLc_set ks ss f
                                                 )
        call_CTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
-                                       putMVar str $ show f ++ " : " ++ show (mcCTLS_set (ks, ss) f)
+                                       putMVar str $! show f ++ " : " ++ show (mcCTLS_set (ks, ss) f)
                                                 )
    in do
        let suc_ks                  = randoms (mkStdGen ranKS) :: [Int]

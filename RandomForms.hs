@@ -21,7 +21,7 @@ randomFormsLTL n m s = let vars = ["p"++show j | j<-[0..m-1]]
                                               3 -> DisyP (randF tipF indV vars (k+3) (m+4) (n-1)) (randF tipF indV vars (k+4) (m+5) (n-1))
                                               4 -> opF (randF tipF indV vars (k+1) (m+2) (n-1))
                                               5 -> U (randF tipF indV vars (k+5) (m+6) (n-1)) (randF tipF indV vars (k+2) (m+3) (n-1))
-                                              6 -> R (randF tipF indV vars (k+6) (m+7) (n-1)) (randF tipF indV vars (k+1) (m+2) (n-1))
+                                              6 -> V (randF tipF indV vars (k+6) (m+7) (n-1)) (randF tipF indV vars (k+1) (m+2) (n-1))
                                               
 
 --Dados n,m,s, crea fórmulas CTL aleatorias de longitud n con m variables utilizando la semilla s.

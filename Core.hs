@@ -32,11 +32,10 @@ data PathF = St StateF
            | DisyP PathF PathF 
            | ConjP PathF PathF 
            | U PathF PathF 
-           | R PathF PathF 
+           | V PathF PathF 
            | X PathF deriving (Eq,Ord)
 
 
---Recursive Normal Negative Form of state and path formulas.
 negS::StateF->StateF
 negS φ = case φ of
           Var a      -> Neg a
@@ -52,8 +51,8 @@ negP ф = case ф of
            ConjP ф₁ ф₂  -> DisyP (negP ф₁) (negP ф₂)
            DisyP ф₁ ф₂  -> ConjP (negP ф₁) (negP ф₂)
            X ф₁             -> X $ negP ф₁
-           U ф₁ ф₂         -> R (negP ф₁) (negP ф₂)
-           R ф₁ ф₂         -> U (negP ф₁) (negP ф₂)
+           U ф₁ ф₂         -> V (negP ф₁) (negP ф₂)
+           V ф₁ ф₂         -> U (negP ф₁) (negP ф₂)
 
 
 -- Bot and Top
@@ -68,17 +67,17 @@ top = Neg ""
 opG::PathF->PathF
 opG ф = case ф of
          -- GGф ≡ Gф
-         R (St (Var "")) ф₁ -> opG ф₁
+         V (St (Var "")) ф₁ -> opG ф₁
          -- GFGф ≡ FGф
-         U (St (Neg "")) (R (St (Var "")) ф₁) -> opF $ opG $ ф₁
-         _ -> R (St bot) ф
+         U (St (Neg "")) (V (St (Var "")) ф₁) -> opF $ opG $ ф₁
+         _ -> V (St bot) ф
 
 opF::PathF->PathF
 opF ф = case ф of
           -- FFф ≡ Fф
           U (St (Neg "")) ф₁ -> opF ф₁
           -- FGFф ≡ GFф
-          R (St (Var "")) (U (St (Neg "")) ф₁) -> opG $ opF ф₁
+          V (St (Var "")) (U (St (Neg "")) ф₁) -> opG $ opF ф₁
           _ -> U (St top) ф
 
 -- Implication Operator
@@ -112,30 +111,30 @@ subgoals ks@(KS (_, r, _)) σ@(Assrt (s, _Φ)) =
    then Subg []
    else let ф = elemAt 0 _Φ in
         case ф of
-          St φ       -> if eval_mcCTLS ks (s, φ)
-                        then T 
-                        else Subg [deleteF ф σ]
-          DisyP ф₁ ф₂  -> Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ]
-          ConjP ф₁ ф₂  -> if ф₁ == ф₂ -- ф∧ф ≡ ф
-                        then Subg [insertF ф₁ $ deleteF ф σ]
-                        else Subg [insertF ф₁ $ deleteF ф σ,
+          St φ        -> if eval_mcCTLS ks (s, φ)
+                         then T 
+                         else Subg [deleteF ф σ]
+          DisyP ф₁ ф₂ -> Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ]
+          ConjP ф₁ ф₂ -> if ф₁ == ф₂ -- ф⋀ф ≡ ф
+                         then Subg [insertF ф₁ $ deleteF ф σ]
+                         else Subg [insertF ф₁ $ deleteF ф σ,
                                    insertF ф₂ $ deleteF ф σ]
-          U ф₁ ф₂         -> if ф₁ == ф₂ -- фUф ≡ ф 
-                        then Subg [insertF ф₁ $ deleteF ф σ]
-                        -- ф₁Uф₂ ≡ (ф₁∨ф₂)∧(ф₂∨(X(ф₁Uф₂)))
-                        else Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ,
+          U ф₁ ф₂     -> if ф₁ == ф₂ -- фUф ≡ ф 
+                         then Subg [insertF ф₁ $ deleteF ф σ]
+                         -- ф₁Uф₂ ≡ (ф₁⋁ф₂)⋀(ф₂⋁(X(ф₁Uф₂)))
+                         else Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ,
                                    insertF ф₂ $ insertF (X ф) $ deleteF ф σ]
-          R ф₁ ф₂         -> if ф₁ == ф₂ -- фRф ≡ ф
-                        then Subg [insertF ф₁ $ deleteF ф σ]
-                        -- ф₁Rф₂ ≡ ф₂∧(ф₁∨(X(ф₁Rф₂)))
-                        else Subg $ if ф₁ == St bot
-                                    then [insertF ф₂ $ deleteF ф σ,
-                                          insertF (X ф) $ deleteF ф σ]
-                                    else [insertF ф₂ $ deleteF ф σ,
-                                          insertF ф₁ $ insertF (X ф) $ deleteF ф σ]
-          X _        -> -- (Xф₁)∨(Xф₂)∨⋯∨(Xф_n) ≡ X(ф₁∨ф₂∨⋯∨ф_n)
-                        let _Φ₁ = Data.Set.map (\(X ф) -> ф) _Φ in
-                        Subg [Assrt (s', _Φ₁) | s' <- r s]
+          V ф₁ ф₂     -> if ф₁ == ф₂ -- фVф ≡ ф
+                         then Subg [insertF ф₁ $ deleteF ф σ]
+                         -- ф₁Vф₂ ≡ ф₂⋀(ф₁⋁(X(ф₁Vф₂)))
+                         else Subg $ if ф₁ == St bot
+                                     then [insertF ф₂ $ deleteF ф σ,
+                                           insertF (X ф) $ deleteF ф σ]
+                                     else [insertF ф₂ $ deleteF ф σ,
+                                           insertF ф₁ $ insertF (X ф) $ deleteF ф σ]
+          X _         -> -- (Xф₁)⋁(Xф₂)⋁⋯⋁(Xф_n) ≡ X(ф₁⋁ф₂⋁⋯⋁ф_n)
+                         let _Φ₁ = Data.Set.map (\(X ф) -> ф) _Φ in
+                         Subg [Assrt (s', _Φ₁) | s' <- r s]
 
 
 --Submetas generadas por las reglas
@@ -144,7 +143,7 @@ data Subgoals = T | Subg [Assertion]
 
 check_success::[Assertion]->Bool
 check_success v = let фs = concat [toList _Φ | Assrt (_, _Φ) <- v] in
-                  (not . null) [R ф₁ ф₂ | R ф₁ ф₂  <- фs, (not . elem ф₂) фs]
+                  (not . null) [V ф₁ ф₂ | V ф₁ ф₂ <- фs, (not . elem ф₂) фs]
 
 --Actualiza los sucesores de un estado
 upd_r::KripkeS->State->[State]->KripkeS
@@ -162,7 +161,7 @@ insert_Vp σ = ST $ \v -> ((), insert σ v)
 
 {-
  *********************************************************
- * LTL, LTL WITH COUNTEREXAMPLES AND CTL☆ MODEL CHECKING *
+ * LTL, LTL WITH COUNTEVEXAMPLES AND CTL☆ MODEL CHECKING *
  ********************************************************* 
 -}
  
@@ -210,7 +209,7 @@ mcALTLc ks σ = dfs ks σ []
          then return True
          else if   elem σ stack
               then do
-                    let stack' = σ : takeWhile (σ/=) stack
+                    let  stack' = σ : takeWhile (σ/=) stack
                     if   check_success stack'
                     then do
                           forM_ stack' insert_Vp
@@ -261,18 +260,18 @@ mcCTLS ks@(KS (_, _, l)) (s, φ) =
     if s_φ_in_Vs 
     then return True
     else case φ of
-           Var a      -> update (l s a)
-           Neg a      -> update ((not . l s) a)
-           ConjS φ₁ φ₂  -> do
-                          b₁ <- mcCTLS ks (s, φ₁)
-                          b₂ <- mcCTLS ks (s, φ₂)
-                          update (b₁ && b₂)
-           DisyS φ₁ φ₂  -> do
-                          b₁ <- mcCTLS ks (s, φ₁)
-                          b₂ <- mcCTLS ks (s, φ₂)
-                          update (b₁ || b₂)
-           A ф        -> update (eval_mcALTL ks (Assrt (s, singleton ф)))
-           E ф        -> update ((not . eval_mcALTL ks) (Assrt (s, (singleton . negP) ф)))
+           Var a       -> update (l s a)
+           Neg a       -> update ((not . l s) a)
+           ConjS φ₁ φ₂ -> do
+                           b₁ <- mcCTLS ks (s, φ₁)
+                           b₂ <- mcCTLS ks (s, φ₂)
+                           update (b₁ && b₂)
+           DisyS φ₁ φ₂ -> do
+                           b₁ <- mcCTLS ks (s, φ₁)
+                           b₂ <- mcCTLS ks (s, φ₂)
+                           update (b₁ || b₂)
+           A ф         -> update (eval_mcALTL ks (Assrt (s, singleton ф)))
+           E ф         -> update ((not . eval_mcALTL ks) (Assrt (s, (singleton . negP) ф)))
    where
      update b = do
                  when b (insert_Vs (s, φ))
@@ -298,52 +297,52 @@ smv_output = "/home/moy/nuXmv/bin/ejemplo_random.smv"
  ****************** -}
 
 instance Show Assertion where
-   show (Assrt (s,_Φ)) = "s" ++ show s ++ " ⊢ " ++ (show $ toList _Φ)
+   show (Assrt (s, _Φ)) = "s" ++ show s ++ " ⊢ " ++ (show $ toList _Φ)
 
 
 instance Show StateF where
    show sf = case sf of
              -- Variables
               Var "" -> "⊥"
-              Var a -> a
+              Var a  -> a
               Neg "" -> "┬"
-              Neg a -> "¬"++a
+              Neg a  -> "¬" ++ a
              -- Conjunction
-              ConjS (Var p) (Var q) -> p++"∧"++q
-              ConjS (Neg p) (Neg q) -> "¬"++p++"∧¬"++q
-              ConjS s1 (Var q) -> case s1 of
-                                    Neg p -> show s1++"∧"++q
-                                    _ -> "("++show s1++")∧"++q
-              ConjS (Var p) s2 -> case s2 of
-                                    Neg q -> p++"∧¬"++q
-                                    _ -> p++"∧("++show s2++")"
-              ConjS s1@(Neg p) s2 -> show s1++"∧("++show s2++")"
-              ConjS s1 s2@(Neg q) -> "("++show s1++")∧"++show s2
-              ConjS s1 s2 -> "("++show s1++")∧("++show s2++")"
+              ConjS (Var p) (Var q) -> p ++ " ⋀ " ++ q
+              ConjS (Neg p) (Neg q) -> "¬" ++ p ++ " ⋀ ¬" ++ q
+              ConjS s1 (Var q)      -> case s1 of
+                                        Neg p -> show s1 ++ " ⋀ " ++ q
+                                        _     -> "(" ++ show s1 ++ ") ⋀ " ++ q
+              ConjS (Var p) s2      -> case s2 of
+                                        Neg q -> p ++ " ⋀ ¬" ++ q
+                                        _ -> p ++ " ⋀ (" ++ show s2 ++ ")"
+              ConjS s1@(Neg p) s2   -> show s1 ++ " ⋀ (" ++ show s2 ++ ")"
+              ConjS s1 s2@(Neg q)   -> "(" ++ show s1 ++ ") ⋀ " ++ show s2
+              ConjS s1 s2           -> "(" ++ show s1 ++ ") ⋀ (" ++ show s2 ++ ")"
              -- Disjunction
-              DisyS (Var p) (Var q) -> p++"∨"++q
-              DisyS (Neg p) (Neg q) -> "¬"++p++"∨¬"++q
-              DisyS s1 (Var q) -> case s1 of
-                                    Neg p -> show s1++"∨"++q
-                                    _ -> "("++show s1++")∨"++q
-              DisyS (Var p) s2 -> case s2 of
-                                    Neg q -> p++"∨¬"++q
-                                    _ -> p++"∨("++show s2++")"
-              DisyS s1@(Neg p) s2 -> show s1++"∨("++show s2++")"
-              DisyS s1 s2@(Neg q) -> "("++show s1++")∨"++show s2
-              DisyS s1 s2 -> "("++show s1++")∨("++show s2++")"
+              DisyS (Var p) (Var q) -> p ++ " ⋁ " ++ q
+              DisyS (Neg p) (Neg q) -> "¬" ++ p ++ " ⋁ ¬" ++ q
+              DisyS s1 (Var q)      -> case s1 of
+                                        Neg p -> show s1 ++ " ⋁ " ++ q
+                                        _     -> "(" ++ show s1 ++ ") ⋁ " ++ q
+              DisyS (Var p) s2      -> case s2 of
+                                        Neg q -> p ++ " ⋁ ¬" ++ q
+                                        _     -> p ++ " ⋁ (" ++ show s2 ++ ")"
+              DisyS s1@(Neg p) s2   -> show s1 ++ " ⋁ (" ++ show s2 ++ ")"
+              DisyS s1 s2@(Neg q)   -> "(" ++ show s1 ++ ") ⋁ " ++ show s2
+              DisyS s1 s2           -> "(" ++ show s1 ++ ") ⋁ (" ++ show s2 ++ ")"
              -- ForAll
               A p -> case p of
-                      X p' -> "AX "++show p'
-                      U (St (Neg "")) p' -> "AF "++show p'
-                      R (St (Var "")) p' -> "AG "++show p'
-                      _ -> "A["++show p++"]"
+                      X p'               -> "AX " ++ show p'
+                      U (St (Neg "")) p' -> "AF " ++ show p'
+                      V (St (Var "")) p' -> "AG " ++ show p'
+                      _                  -> "A[" ++ show p ++ "]"
              -- Exists
               E p -> case p of
-                      X p' -> "EX "++show p'
-                      U (St (Neg "")) p' -> "EF "++show p'
-                      R (St (Var "")) p' -> "EG "++show p'
-                      _ -> "E["++show p++"]"
+                      X p'               -> "EX " ++ show p'
+                      U (St (Neg "")) p' -> "EF " ++ show p'
+                      V (St (Var "")) p' -> "EG " ++ show p'
+                      _                  -> "E[" ++ show p ++ "]"
 
 
 instance Show PathF where
@@ -352,36 +351,36 @@ instance Show PathF where
              St s -> case s of
                      Var _ -> show s
                      Neg _ -> show s
-                     _ -> "("++show s++")"
+                     _     -> "(" ++ show s ++ ")"
              -- Conjunction
-             ConjP p1@(St _) p2@(St _) -> show p1++"∧"++show p2
-             ConjP p1@(St _) p2 -> show p1++"∧("++show p2++")"
-             ConjP p1 p2@(St _) -> "("++show p1++")∧"++show p2
-             ConjP p1 p2 -> "("++show p1++")∧("++show p2++")"
+             ConjP p1@(St _) p2@(St _) -> show p1 ++ " ⋀ " ++ show p2
+             ConjP p1@(St _) p2        -> show p1 ++ " ⋀ (" ++ show p2 ++ ")"
+             ConjP p1 p2@(St _)        -> "(" ++ show p1 ++ ") ⋀ " ++ show p2
+             ConjP p1 p2               -> "(" ++ show p1 ++ ") ⋀ (" ++ show p2 ++ ")"
              -- Disjunction
-             DisyP p1@(St _) p2@(St _) -> show p1++"∨"++show p2
-             DisyP p1@(St _) p2 -> show p1++"∨("++show p2++")"
-             DisyP p1 p2@(St _) -> "("++show p1++")∨"++show p2
-             DisyP p1 p2 -> "("++show p1++")∨("++show p2++")"
+             DisyP p1@(St _) p2@(St _) -> show p1 ++ " ⋁ " ++ show p2
+             DisyP p1@(St _) p2        -> show p1 ++ " ⋁ (" ++ show p2 ++ ")"
+             DisyP p1 p2@(St _)        -> "(" ++ show p1 ++ ") ⋁ " ++ show p2
+             DisyP p1 p2               -> "(" ++ show p1 ++ ") ⋁ (" ++ show p2 ++ ")"
              -- neXt state
              X q -> case q of
-                     St s@(Var _) -> "X"++show s
-                     St s@(Neg _) -> "X"++show s
-                     St s@(_)     -> "X"++show q
-                     X q1 -> "X"++show q
-                     _ -> "X("++show q++")"
+                     St s@(Var _) -> "X" ++ show s
+                     St s@(Neg _) -> "X" ++ show s
+                     St s@(_)     -> "X" ++ show q
+                     X q1         -> "X" ++ show q
+                     _            -> "X(" ++ show q ++ ")"
              -- Until
-             U (St (Neg "")) p2@(St _) -> "F"++show p2
-             U (St (Neg "")) p2 -> "F("++show p2++")"
-             U p1@(St _) p2@(St _) -> show p1++"U"++show p2
-             U p1@(St _) p2 -> show p1++"U("++show p2++")"
-             U p1 p2@(St _) -> "("++show p1++")U"++show p2
-             U p1 p2 -> "("++show p1++")U("++show p2++")"
+             U (St (Neg "")) p2@(St _) -> "F" ++ show p2
+             U (St (Neg "")) p2        -> "F(" ++ show p2 ++ ")"
+             U p1@(St _) p2@(St _)     -> show p1 ++ " U " ++ show p2
+             U p1@(St _) p2            -> show p1 ++ " U (" ++ show p2 ++ ")"
+             U p1 p2@(St _)            -> "(" ++ show p1 ++ ") U " ++ show p2
+             U p1 p2                   -> "(" ++ show p1 ++ ") U (" ++ show p2 ++ ")"
              -- Release
-             R (St (Var "")) p2@(St _) -> "G"++show p2
-             R (St (Var "")) p2 -> "G("++show p2++")"
-             R p1@(St _) p2@(St _) -> show p1++"R"++show p2
-             R p1@(St _) p2 -> show p1++"R("++show p2++")"
-             R p1 p2@(St _) -> "("++show p1++")R"++show p2
-             R p1 p2 -> "("++show p1++")R("++show p2++")"
+             V (St (Var "")) p2@(St _) -> "G" ++ show p2
+             V (St (Var "")) p2        -> "G(" ++ show p2 ++ ")"
+             V p1@(St _) p2@(St _)     -> show p1 ++ " V " ++ show p2
+             V p1@(St _) p2            -> show p1 ++ " V (" ++ show p2 ++")"
+             V p1 p2@(St _)            -> "(" ++ show p1 ++ ") V " ++ show p2
+             V p1 p2                   -> "(" ++ show p1 ++ ") V (" ++ show p2 ++ ")"
 
