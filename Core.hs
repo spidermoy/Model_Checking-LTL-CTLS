@@ -25,34 +25,34 @@ data StateF = Var At
             | ConjS StateF StateF
             | DisyS StateF StateF
             | A PathF
-            | E PathF deriving (Eq,Ord)
+            | E PathF deriving (Eq, Ord)
 
 -- Path formulas.
-data PathF = St StateF 
+data PathF = St StateF
            | DisyP PathF PathF 
            | ConjP PathF PathF 
            | U PathF PathF 
            | V PathF PathF 
-           | X PathF deriving (Eq,Ord)
+           | X PathF deriving (Eq, Ord)
 
 
 negS::StateF->StateF
 negS φ = case φ of
-          Var a      -> Neg a
-          Neg a      -> Var a 
-          ConjS φ₁ φ₂  -> DisyS (negS φ₁) (negS φ₂)
-          DisyS φ₁ φ₂  -> ConjS (negS φ₁) (negS φ₂)
-          A ф        -> E $ negP ф
-          E ф        -> A $ negP ф
+          Var a       -> Neg a
+          Neg a       -> Var a 
+          ConjS φ₁ φ₂ -> DisyS (negS φ₁) (negS φ₂)
+          DisyS φ₁ φ₂ -> ConjS (negS φ₁) (negS φ₂)
+          A ф         -> E $ negP ф
+          E ф         -> A $ negP ф
 
 negP::PathF->PathF
 negP ф = case ф of
-           St φ       -> St $ negS φ 
-           ConjP ф₁ ф₂  -> DisyP (negP ф₁) (negP ф₂)
-           DisyP ф₁ ф₂  -> ConjP (negP ф₁) (negP ф₂)
-           X ф₁             -> X $ negP ф₁
-           U ф₁ ф₂         -> V (negP ф₁) (negP ф₂)
-           V ф₁ ф₂         -> U (negP ф₁) (negP ф₂)
+           St φ        -> St $ negS φ
+           ConjP ф₁ ф₂ -> DisyP (negP ф₁) (negP ф₂)
+           DisyP ф₁ ф₂ -> ConjP (negP ф₁) (negP ф₂)
+           X ф₁        -> X $ negP ф₁
+           U ф₁ ф₂     -> V (negP ф₁) (negP ф₂)
+           V ф₁ ф₂     -> U (negP ф₁) (negP ф₂)
 
 
 -- Bot and Top
@@ -331,7 +331,7 @@ instance Show StateF where
               DisyS s1@(Neg p) s2   -> show s1 ++ " ⋁ (" ++ show s2 ++ ")"
               DisyS s1 s2@(Neg q)   -> "(" ++ show s1 ++ ") ⋁ " ++ show s2
               DisyS s1 s2           -> "(" ++ show s1 ++ ") ⋁ (" ++ show s2 ++ ")"
-             -- ForAll
+             -- For All
               A p -> case p of
                       X p'               -> "AX " ++ show p'
                       U (St (Neg "")) p' -> "AF " ++ show p'

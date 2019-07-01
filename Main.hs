@@ -1,7 +1,7 @@
 module Main where
 import System.Environment(getArgs)
 import Experiments
-
+import Examples
 
 main::IO ()
 main = do
@@ -14,6 +14,7 @@ main = do
       ["seeds", ranInit, ranNumInit, ranKS, ranF, experiment, n_vars, forms_n]
                           -> seeds_exp ranInit ranNumInit ranKS ranF experiment n_vars forms_n False
       ["thesis_experiments"] -> thesis_experiments
+      ["examples"] -> examples
       _ -> putStrLn "Invalid arguments"
     where
       random_exp experiment n_vars forms_n nuXmv = case experiment of
