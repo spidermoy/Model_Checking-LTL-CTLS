@@ -55,6 +55,14 @@ ctl_examples = [
 
 examples::IO ()
 examples = do
+        putStrLn "Kripke Structure:"
+        putStrLn $ "\tStates: " ++ show [0, 1, 2]
+        putStrLn $ "\t r(0) = [1, 2]"
+        putStrLn $ "\t r(1) = [0, 2]"
+        putStrLn $ "\t r(2) = [2]"
+        putStrLn $ "\t l(0) = [p, q]"
+        putStrLn $ "\t r(1) = [q, r]"
+        putStrLn $ "\t r(2) = [r]"
         putStrLn "\n\tLTL EXAMPLES:"
         forM_ ltl_examples (\(states, ф) -> do
                               forM_ states (\s -> do
