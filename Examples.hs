@@ -55,22 +55,24 @@ ctl_examples = [
 
 examples::IO ()
 examples = do
-        putStrLn "Kripke Structure:"
-        putStrLn $ "\tStates: " ++ show [0, 1, 2]
-        putStrLn $ "\t r(0) = [1, 2]"
-        putStrLn $ "\t r(1) = [0, 2]"
-        putStrLn $ "\t r(2) = [2]"
-        putStrLn $ "\t l(0) = [p, q]"
-        putStrLn $ "\t r(1) = [q, r]"
-        putStrLn $ "\t r(2) = [r]"
-        putStrLn "\n\tLTL EXAMPLES:"
-        forM_ ltl_examples (\(states, ф) -> do
+    putStrLn "Kripke Structure:"
+    putStrLn $ "\tStates: " ++ show [0, 1, 2]
+    putStrLn $ "\t r(0) = [1, 2]"
+    putStrLn $ "\t r(1) = [0, 2]"
+    putStrLn $ "\t r(2) = [2]"
+    putStrLn $ "\t l(0) = [p, q]"
+    putStrLn $ "\t r(1) = [q, r]"
+    putStrLn $ "\t r(2) = [r]"
+    putStrLn "\n\tLTL EXAMPLES:"
+    forM_ ltl_examples (\(states, ф) -> do
                               forM_ states (\s -> do
                                               let σ = Assrt (s, singleton ф)
                                               putStr $ show σ ++ ": "
                                               print $ eval_mcALTL kripkeS_example σ))
-        putStrLn "\n\tCTL EXAMPLES:"
-        forM_ ctl_examples (\(s, φ) -> do
+    putStrLn "\n\tCTL EXAMPLES:"
+    forM_ ctl_examples (\(s, φ) -> do
                               putStr $ show (s, φ) ++ ": "
                               print $ eval_mcCTLS kripkeS_example (s, φ))
+    putStrLn $ "\nExamples from:"
+    putStrLn "Michael Huth & Mark Ryan, “LOGIC IN COMPUTER SCIENCE, Modelling and Reasoning about Systems”, Second Edition."
 
