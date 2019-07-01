@@ -64,5 +64,5 @@ examples = do
         putStrLn "\n\tCTL EXAMPLES:"
         forM_ ctl_examples (\(s, φ) -> do
                               putStr $ show (s, φ) ++ ": "
-                              print $ eval_mcCTLS kripkeS_example (s, φ)) --(kripkeS_example, s) φ)
+                              print $ eval_mcCTLS kripkeS_example (s, φ))
 
