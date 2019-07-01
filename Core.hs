@@ -14,8 +14,8 @@ type At = String
 type State = Int 
 
 {-
-A Kripke Structure is a triple (n, r, l). 'n' indicates the states range [0 .. n].
-'r' is the transition function and 'l' maps states to variable sets.
+    A Kripke Structure is a triple (n, r, l). 'n' indicates the states range [0 .. n].
+    'r' is the transition function and 'l' maps states to variable sets.
 -}
 data KripkeS = KS (Int, State->[State], State->(At->Bool))
 
@@ -118,12 +118,12 @@ subgoals ks@(KS (_, r, _)) σ@(Assrt (s, _Φ)) =
           ConjP ф₁ ф₂ -> if   ф₁ == ф₂ -- ф⋀ф ≡ ф
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          else Subg [insertF ф₁ $ deleteF ф σ,
-                                   insertF ф₂ $ deleteF ф σ]
+                                    insertF ф₂ $ deleteF ф σ]
           U ф₁ ф₂     -> if   ф₁ == ф₂ -- фUф ≡ ф 
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          -- ф₁Uф₂ ≡ (ф₁⋁ф₂)⋀(ф₂⋁(X(ф₁Uф₂)))
                          else Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ,
-                                   insertF ф₂ $ insertF (X ф) $ deleteF ф σ]
+                                    insertF ф₂ $ insertF (X ф) $ deleteF ф σ]
           V ф₁ ф₂     -> if   ф₁ == ф₂ -- фVф ≡ ф
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          -- ф₁Vф₂ ≡ ф₂⋀(ф₁⋁(X(ф₁Vф₂)))

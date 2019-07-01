@@ -4,12 +4,6 @@ import Control.Monad(forM_)
 import Data.Set(singleton)
 import Core
 
-{-
-  Examples was taken from:
-  “LOGIC IN COMPUTER SCIENCE, Modelling and Reasoning about Systems”,
-  MICHAEL HUTH & MARK RYAN, Second Edition.
--}
-
 
 -- Kripke structure from page 179.
 kripkeS_example = KS (2, r, l)
@@ -51,7 +45,6 @@ ctl_examples = [
           (0, A $ opG $ St $ impS (DisyS (DisyS (Var "p") (Var "q")) (Var "r")) 
                                   (E $ opF $ St $ E $ opG $ St $ Var "r"))
                ]
-
 
 examples::IO ()
 examples = do
