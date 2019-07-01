@@ -7,10 +7,10 @@ import Control.Exception
 import StateMonad
 
 
--- Atomic formulas (variables) are strings.
+-- Atomic formulas are strings.
 type At = String
 
--- States in Kripke structures are integers.
+-- States are integers.
 type State = Int 
 
 {-
@@ -63,7 +63,7 @@ top::StateF
 top = Neg ""
 
 
--- Gф and Fф 
+-- Gф and Fф
 opG::PathF->PathF
 opG ф = case ф of
          -- GGф ≡ Gф
@@ -80,23 +80,23 @@ opF ф = case ф of
           V (St (Var "")) (U (St (Neg "")) ф₁) -> opG $ opF ф₁
           _ -> U (St top) ф
 
+
 -- Implication Operator
 impS::StateF->StateF->StateF
 impS φ₁ φ₂ = if   φ₁ == φ₂
-           then top
-           else DisyS (negS φ₁) φ₂
+             then top
+             else DisyS (negS φ₁) φ₂
 
 impP::PathF->PathF->PathF
 impP ф₁ ф₂ = if   ф₁ == ф₂ 
-           then St top
-           else DisyP (negP ф₁) ф₂
-
+             then St top
+             else DisyP (negP ф₁) ф₂
 
 
 data Assertion = Assrt (State, Set PathF) deriving (Eq, Ord)
 
 
---Borra una fórmula de una aserción 
+--Borra una fórmula de una aserción
 deleteF::PathF->Assertion->Assertion
 deleteF ф (Assrt (s,_Φ)) = Assrt (s,delete ф _Φ)
 
@@ -107,32 +107,32 @@ insertF ф (Assrt (s, _Φ)) = Assrt (s, insert ф _Φ)
 
 subgoals::KripkeS->Assertion->Subgoals
 subgoals ks@(KS (_, r, _)) σ@(Assrt (s, _Φ)) =
-   if _Φ == empty
+   if   _Φ == empty
    then Subg []
-   else let ф = elemAt 0 _Φ in
+   else let  ф = elemAt 0 _Φ in
         case ф of
-          St φ        -> if eval_mcCTLS ks (s, φ)
+          St φ        -> if   eval_mcCTLS ks (s, φ)
                          then T 
                          else Subg [deleteF ф σ]
           DisyP ф₁ ф₂ -> Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ]
-          ConjP ф₁ ф₂ -> if ф₁ == ф₂ -- ф⋀ф ≡ ф
+          ConjP ф₁ ф₂ -> if   ф₁ == ф₂ -- ф⋀ф ≡ ф
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          else Subg [insertF ф₁ $ deleteF ф σ,
                                    insertF ф₂ $ deleteF ф σ]
-          U ф₁ ф₂     -> if ф₁ == ф₂ -- фUф ≡ ф 
+          U ф₁ ф₂     -> if   ф₁ == ф₂ -- фUф ≡ ф 
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          -- ф₁Uф₂ ≡ (ф₁⋁ф₂)⋀(ф₂⋁(X(ф₁Uф₂)))
                          else Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ,
                                    insertF ф₂ $ insertF (X ф) $ deleteF ф σ]
-          V ф₁ ф₂     -> if ф₁ == ф₂ -- фVф ≡ ф
+          V ф₁ ф₂     -> if   ф₁ == ф₂ -- фVф ≡ ф
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          -- ф₁Vф₂ ≡ ф₂⋀(ф₁⋁(X(ф₁Vф₂)))
-                         else Subg $ if ф₁ == St bot
+                         else Subg $ if   ф₁ == St bot
                                      then [insertF ф₂ $ deleteF ф σ,
                                            insertF (X ф) $ deleteF ф σ]
                                      else [insertF ф₂ $ deleteF ф σ,
                                            insertF ф₁ $ insertF (X ф) $ deleteF ф σ]
-          X _         -> -- (Xф₁)⋁(Xф₂)⋁⋯⋁(Xф_n) ≡ X(ф₁⋁ф₂⋁⋯⋁ф_n)
+          X _         -> -- (Xф₁)⋁(Xф₂)⋁ ⋯ ⋁(Xф_n) ≡ X(ф₁⋁ф₂⋁ ⋯ ⋁ф_n)
                          let _Φ₁ = Data.Set.map (\(X ф) -> ф) _Φ in
                          Subg [Assrt (s', _Φ₁) | s' <- r s]
 
@@ -228,7 +228,7 @@ mcALTLc ks σ = dfs ks σ []
                                         "s" ++ show s ++ " ⊬ " ++ (show $ toList _Φ) ++ "\n" ++
                                         concat [show σ ++ "\n" | σ <- filter (\(Assrt (s, _)) -> s >= 0) stack]
      cycleC (σ:stack) = error $ "\n\n\tU-Cycle detected:\n\n" ++
-                        concat [if σ_ == σ
+                        concat [if   σ_ == σ
                                 then "--> " ++ show σ_ ++ "\n"
                                 else "    " ++ show σ_ ++ "\n" | σ_ <- filter (\(Assrt (s, _)) -> s >= 0) (σ:stack)]
 
@@ -257,7 +257,7 @@ mcCTLS::KripkeS->(State, StateF)->StateM Vs Bool
 mcCTLS ks@(KS (_, _, l)) (s, φ) =
    do
     s_φ_in_Vs <- elem_Vs (s, φ)
-    if s_φ_in_Vs 
+    if   s_φ_in_Vs 
     then return True
     else case φ of
            Var a       -> update (l s a)
