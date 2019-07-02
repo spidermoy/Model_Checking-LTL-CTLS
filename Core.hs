@@ -100,7 +100,7 @@ data Assertion = Assrt (State, Set PathF) deriving (Eq, Ord)
 
 {- Some operations on assertions -}
 deleteF::PathF->Assertion->Assertion
-deleteF ф (Assrt (s,_Φ)) = Assrt (s,delete ф _Φ)
+deleteF ф (Assrt (s,_Φ)) = Assrt (s, delete ф _Φ)
 
 insertF::PathF->Assertion->Assertion
 insertF ф (Assrt (s, _Φ)) = Assrt (s, insert ф _Φ)
@@ -148,21 +148,21 @@ check_success v = let фs = concat [toList _Φ | Assrt (_, _Φ) <- v] in
                   (not . null) [V ф₁ ф₂ | V ф₁ ф₂ <- фs, (not . elem ф₂) фs]
 
 
+{- LTL, LTL WITH COUNTEREXAMPLES AND CTL☆ MODEL CHECKING -}
+
+
+{- A set of visited assertions to avoid to do repetitive work -}
 type Vp = Set Assertion
 
+
+{- Operations on Vp with state monad -}
 elem_Vp::Assertion->StateM Vp Bool
 elem_Vp σ = ST $ \v -> (member σ v, v)
 
 insert_Vp::Assertion->StateM Vp ()
-insert_Vp σ = ST $ \v -> ((), insert σ v)
+insert_Vp σ = ST $ \v -> ((), insert σ v) 
 
 
-{-
- *********************************************************
- * LTL, LTL WITH COUNTEVEXAMPLES AND CTL☆ MODEL CHECKING *
- ********************************************************* 
--}
- 
 
 mcALTL::KripkeS->Assertion->StateM Vp Bool
 mcALTL ks σ = dfs ks σ [] 
