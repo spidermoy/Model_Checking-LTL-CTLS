@@ -5,7 +5,7 @@ import Data.Set(singleton)
 import Core
 
 
--- Kripke structure from page 179.
+{- Kripke structure from page 179. -}
 kripkeS_example = KS (2, r, l)
     where
       r 0 = [1, 2]
@@ -15,7 +15,8 @@ kripkeS_example = KS (2, r, l)
       l 1 = \a -> elem a ["q", "r"]
       l 2 = (== "r")
 
--- LTL examples from page 182.
+
+{- LTL examples from page 182. -}
 ltl_examples = [
           ([0], ConjP (St $ Var "p") (St $ Var "q")),
           ([0], St $ Neg "r"),
@@ -30,7 +31,8 @@ ltl_examples = [
           ([0], impP (opG $ opF $ St $ Var "r") (opG $ opF $ St $ Var "p"))
                ]
 
--- LTL examples from page 213.
+
+{- LTL examples from page 213. -}
 ctl_examples = [
           (0, ConjS (Var "p") (Var "q")),
           (0, Neg "r"),
@@ -46,16 +48,17 @@ ctl_examples = [
                                   (E $ opF $ St $ E $ opG $ St $ Var "r"))
                ]
 
+
 examples::IO ()
 examples = do
     putStrLn "Kripke Structure:"
     putStrLn $ "\tStates: " ++ show [0, 1, 2]
-    putStrLn $ "\t r(0) = [1, 2]"
-    putStrLn $ "\t r(1) = [0, 2]"
-    putStrLn $ "\t r(2) = [2]"
-    putStrLn $ "\t l(0) = [p, q]"
-    putStrLn $ "\t r(1) = [q, r]"
-    putStrLn $ "\t r(2) = [r]"
+    putStrLn $ "\t R(0) = [1, 2]"
+    putStrLn $ "\t R(1) = [0, 2]"
+    putStrLn $ "\t R(2) = [2]"
+    putStrLn $ "\t L(0) = [p, q]"
+    putStrLn $ "\t L(1) = [q, r]"
+    putStrLn $ "\t L(2) = [r]"
     putStrLn "\n\tLTL EXAMPLES:"
     forM_ ltl_examples (\(states, ф) -> do
                               forM_ states (\s -> do
