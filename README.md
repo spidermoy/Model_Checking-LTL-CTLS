@@ -18,7 +18,7 @@ This repository contains my work for obtain my computer scientist master degree:
 for temporal logics written in [Haskell](https://www.haskell.org/).
 This work simplifies and improves Girish Bhat, Rance Cleaveland and Orna Grumberg work.
 See [Efficient On-the-Fly Model Checking for CTL★](https://www.semanticscholar.org/paper/Eecient-On-the-fly-Model-Checking-for-Ctl-Bhat-Cleaveland/e7dbc6e9ff14c98d61af98247e79a3b2058cbfff) for more details.
-([This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains the original implementation of the Bhat, Cleaveland and Grumberg algorithm.)
+([This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains the original implementation of Bhat, Cleaveland and Grumberg algorithm.)
 
 In summary, this repository contains a model verifier for LTL temporal logic, which, does not use Büchi's 
 Automatons or Strongly Connected Components, is only based on formal semantics. 
@@ -34,8 +34,11 @@ This verifier extends naturally to the CTL★ temporal logic (and thus, to the C
 
 ## How to use:
 
-1. Se compila el código tecleando: ghc -O2 Main.hs
-2. El programa puede correrse de la siguiente manera:
+1. Copile the project:
+
+`ghc -O2 --make -threaded Main.hs`
+
+2. Run the program:
 
    * Para correr un experimento aleatorio LTL:
    
