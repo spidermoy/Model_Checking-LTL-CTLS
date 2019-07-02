@@ -1,17 +1,14 @@
 # Simple and Efficient On-the-Fly Model Checking for LTL and CTL★
 
 _While simulation and testing explore some of the possible behaviors and scenarios of the system, leaving open the question of whether the unexplored trajectories may contain the fatal bug, formal verification conducts an exhaustive exploration of all possible behaviors._
-
 ─Clarke, Grumberg & Peled
 
 
 _To me, mathematics, computer science, and the arts are insanely related. They’re all creative expressions._
-
 ─Sebastian Thrun
 
 
 _Haskell is faster than C++, more concise than Perl, more regular than Python, more flexible than Ruby, more typeful than C#, more robust than Java, and has absolutely nothing in common with PHP._
-
 ─Audrey Tang
 
 This repository contains my work for obtain my computer scientist master degree.
