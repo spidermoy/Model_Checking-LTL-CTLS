@@ -21,7 +21,7 @@ See [Efficient On-the-Fly Model Checking for CTL★](https://www.semanticscholar
 ([This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains the original implementation of the Bhat, Cleaveland and Grumberg algorithm.)
 
 In summary, this repository contains a model verifier for LTL temporal logic, which, does not use Büchi's 
-automatons or strongly related components, is only based on formal semantics. 
+Automatons or Strongly Connected Components, is only based on formal semantics. 
 This verifier extends naturally to the CTL★ temporal logic (and thus, to the CTL logic).
 
 
