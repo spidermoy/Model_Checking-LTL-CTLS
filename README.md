@@ -25,16 +25,14 @@ Automatons or Strongly Connected Components, is only based on formal semantics.
 This verifier extends naturally to the CTL★ temporal logic (and thus, to the CTL logic).
 
 
-## Requisitos:
+## Requirements:
 
 * [GHC (The Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
 * [Haskell Cabal](https://www.haskell.org/cabal/)
-* Una vez instalado Cabal es necesario instalar la biblioteca *Random* tecleando:
+* random library (`cabal install random`)
+* [nuXmv](https://nuxmv.fbk.eu/)
 
-     cabal install random
-* [NuSMV](http://nusmv.fbk.eu/) (no es necesario instalarlo si no desea comparar desempeño).
-
-## Modo de uso
+## How to use:
 
 1. Se compila el código tecleando: ghc -O2 Main.hs
 2. El programa puede correrse de la siguiente manera:
