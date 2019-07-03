@@ -40,8 +40,11 @@ This verifier extends naturally to the CTL★ temporal logic (and thus, to the C
 
 2. How to use it:
 
+Let _n_ the number of variables, and _m_ the depth of the formulas of the experiments. Both
+_n_ and _m_ are positive integers. 
+
    * Run a random LTL experiment:
 
-    `./Main random LTL _n_ _m_`
+    `./Main random LTL n m`
 
 
