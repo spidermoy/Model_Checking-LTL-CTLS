@@ -13,7 +13,9 @@ import RandomForms
 import RandomKS
 import ParserNuXmv
 
+
 data TypeExperiment = LTL | LTLc | CTL
+
 
 random_experiment::TypeExperiment->Int->Int->Bool->IO ()
 random_experiment experiment n lforms nuXmv = do
