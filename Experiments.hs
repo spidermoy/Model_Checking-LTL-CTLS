@@ -102,7 +102,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                     putStrLn "\n[Writing nuXmv file...]"
                     write_nuxmv ks states init vars (Right forms) lforms [ranInit, ranNumInit, ranKS, ranF]
                     putStrLn "[nuXmv file was written]"
-                    putStrLn "\n\tmcCTLS:\n"
+                    putStrLn "\n\tmcCTL★:\n"
                     start <- getCurrentTime
                     call_CTLmodelChecker forms ks init str
                     replicateM_ 3 (takeMVar str >>= putStrLn)
@@ -110,7 +110,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                     putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
                     nuXmv_experiment
                   else do
-                    putStrLn "\n\tmcCTL:\n"
+                    putStrLn "\n\tmcCTL★:\n"
                     start <- getCurrentTime
                     call_CTLmodelChecker forms ks init str
                     replicateM_ 3 (takeMVar str >>= putStrLn)
