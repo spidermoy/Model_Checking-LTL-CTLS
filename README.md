@@ -45,6 +45,6 @@ _n_ and _m_ are positive integers.
 
    * Run a random LTL experiment:
 
-    `./Main random LTL n m`
+    ./Main random LTL n m
 
 
