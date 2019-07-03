@@ -42,6 +42,6 @@ This verifier extends naturally to the CTL★ temporal logic (and thus, to the C
 
    * Run a random LTL experiment:
 
-    `./Main random LTL *n* *m*`
+    `./Main random LTL _n_ _m_`
 
 
