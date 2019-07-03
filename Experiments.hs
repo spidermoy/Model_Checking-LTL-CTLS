@@ -21,10 +21,10 @@ random_experiment experiment n lforms nuXmv = do
    ranNumInit <- randomIO
    ranKS      <- randomIO
    ranF       <- randomIO
-   putStrLn $ " Semilla init: "    ++ show ranInit
-   putStrLn $ " Semilla NumInit: " ++ show ranNumInit
-   putStrLn $ " Semilla KS: "      ++ show ranKS
-   putStrLn $ " Semilla F: "       ++ show ranF
+   putStrLn $ " init seed: "    ++ show ranInit
+   putStrLn $ " NumInit seed: " ++ show ranNumInit
+   putStrLn $ " KS seed: "      ++ show ranKS
+   putStrLn $ " F seed: "       ++ show ranF
    seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv
 
 
@@ -47,25 +47,25 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
            init                    = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
            states                  = [0 .. (2^n - 1)]
            ks@(KS (nstates, r, l)) = randomKS n suc_ks
-       putStrLn $ "\nMODELO ALEATORIO DE TAMAÑO 2^" ++ show n
-       putStrLn $ "Profundidad de las fórmulas: "   ++ show lforms
-       putStrLn $ "Estados iniciales: "             ++ show k
+       putStrLn $ "\nKripke structure size: 2^" ++ show n
+       putStrLn $ "Depth of the formulas: "     ++ show lforms
+       putStrLn $ "Initial states number: "     ++ show k
        str <- newEmptyMVar
        case experiment of
          LTL  -> let forms = sort $ randomFormsLTL lforms n ranF in
                 do
-                 putStrLn $ "Forms: " ++ show forms
+                 putStrLn $ "Formulas: " ++ show forms
                  if   nuXmv
                  then do
-                    putStrLn "\n[Creando archivo para nuXmv...]"
+                    putStrLn "\n[Writing nuXmv file...]"
                     write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
-                    putStrLn "[Archivo creado]"
+                    putStrLn "[nuXmv file was written]"
                     putStrLn "\n\tmcALTL:\n"
                     start <- getCurrentTime
                     call_LTLmodelChecker forms ks init str
                     replicateM_ 3 (takeMVar str >>= putStrLn)
                     end   <- getCurrentTime
-                    putStrLn $ "\n\tTiempo de verificación: " ++ (show $ diffUTCTime end start) ++ "\n"
+                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
                     nuXmv_experiment
                  else do
                     putStrLn "\n\tmcALTL:\n"
@@ -73,41 +73,41 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                     call_LTLmodelChecker forms ks init str
                     replicateM_ 3 (takeMVar str >>= putStrLn)
                     end   <- getCurrentTime
-                    putStrLn $ "\n\tTiempo de verificación: " ++ (show $ diffUTCTime end start) ++ "\n"
+                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
          LTLc -> let forms = sort $ randomFormsLTL lforms n ranF in
                  do
-                  putStrLn $ "Forms: " ++ show forms ++ "\n"
+                  putStrLn $ "Formulas: " ++ show forms ++ "\n"
                   if   nuXmv
                   then do
-                    putStrLn "\n[Creando archivo para nuXmv...]"
+                    putStrLn "\n[Writing nuXmv file...]"
                     write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
-                    putStrLn "[Archivo creado]"
+                    putStrLn "[nuXmv file was written]"
                     putStrLn "\n\tmcALTLc:\n"
                     start <- getCurrentTime
                     call_LTLmodelChecker_CounterExample forms ks init
                     end   <- getCurrentTime
-                    putStrLn $ "\n\tTiempo de verificación: " ++ (show $ diffUTCTime end start) ++ "\n"
+                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
                     nuXmv_experiment
                   else do
                     putStrLn "\n\tmcALTLc:\n"
                     start <- getCurrentTime
                     call_LTLmodelChecker_CounterExample forms ks init
                     end   <- getCurrentTime
-                    putStrLn $ "\n\tTiempo de verificación: " ++ (show $ diffUTCTime end start) ++ "\n"
+                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
          CTL  -> let forms = sort $ randomFormsCTL lforms n ranF in
                  do
                   putStrLn $ "Forms: " ++ show forms
                   if   nuXmv
                   then do
-                    putStrLn "\n[Creando archivo para nuXmv...]"
+                    putStrLn "\n[Writing nuXmv file...]"
                     write_nuxmv ks states init vars (Right forms) lforms [ranInit, ranNumInit, ranKS, ranF]
-                    putStrLn "[Archivo creado]"
+                    putStrLn "[nuXmv file was written]"
                     putStrLn "\n\tmcCTLS:\n"
                     start <- getCurrentTime
                     call_CTLmodelChecker forms ks init str
                     replicateM_ 3 (takeMVar str >>= putStrLn)
                     end   <- getCurrentTime
-                    putStrLn $ "\n\tTiempo de verificación: " ++ (show $ diffUTCTime end start) ++ "\n"
+                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
                     nuXmv_experiment
                   else do
                     putStrLn "\n\tmcCTL:\n"
@@ -115,7 +115,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                     call_CTLmodelChecker forms ks init str
                     replicateM_ 3 (takeMVar str >>= putStrLn)
                     end   <- getCurrentTime
-                    putStrLn $ "\n\tTiempo de verificación: " ++ (show $ diffUTCTime end start) ++ "\n"
+                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
     where
       nuXmv_experiment = do
                     putStrLn "\tnuXmv:"
