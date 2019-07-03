@@ -45,8 +45,8 @@ This verifier extends naturally to the CTL★ temporal logic (and thus, to the C
 Let _n_ the number of variables, and _m_ the depth of the formulas of the experiments. Both
 _n_ and _m_ are positive integers.
 
-   * Run a random LTL experiment: `./Main random LTL n m`
-   * Run a random LTL experiment comparing with nuXmv: `./Main random nuXmv LTL n m`
+   * Run a random LTL (CTL) experiment: `./Main random LTL n m`
+   * Run a random LTL (CTL) experiment comparing with nuXmv: `./Main random nuXmv LTL n m`
    * Run a specific experiment by using their initial seeds: `./Main seeds ranInit ranNumInit ranKS ranF experiment n m`
    * Run a specific experiment by using their initial seeds comparing with nuXmv: `./Main seeds nuXmv ranInit ranNumInit ranKS ranF experiment n m`
    * Run simple LTL and CTL examples: `./Main examples`
