@@ -45,10 +45,13 @@ This verifier extends naturally to the CTL★ temporal logic (and thus, to the C
 Let _n_ the number of variables, and _m_ the depth of the formulas of the experiments. Both
 _n_ and _m_ are positive integers.
 
-   * Run a random LTL (CTL) experiment: `./Main random LTL n m`
-   * Run a random LTL (CTL) experiment comparing with nuXmv: `./Main random nuXmv LTL n m`
-   * Run a specific experiment by using their initial seeds: `./Main seeds ranInit ranNumInit ranKS ranF experiment n m`
-   * Run a specific experiment by using their initial seeds comparing with nuXmv: `./Main seeds nuXmv ranInit ranNumInit ranKS ranF experiment n m`
+   * Run a random LTL (or CTL) experiment: `./Main random LTL n m` or `./Main random CTL n m`
+   * Run a random LTL (or CTL) experiment comparing with nuXmv: `./Main random nuXmv LTL n m` or `./Main random nuXmv CTL n m`
+   * Run a random LTL experiment with counterexamples: `./Main random LTLc n m`
+   * Run a random LTL experiment with counterexamples comparing with nuXmv: `./Main random nuXmv LTLc n m`
+   * Run a specific LTL experiment by using their initial seeds: `./Main seeds ranInit ranNumInit ranKS ranF LTLc n m`
+   * Run a specific LTL or CTL experiment by using their initial seeds: `./Main seeds ranInit ranNumInit ranKS ranF LTL n m`
+   * Run a specific LTL or CTL experiment by using their initial seeds comparing with nuXmv: `./Main seeds nuXmv ranInit ranNumInit ranKS ranF LTL n m`
    * Run simple LTL and CTL examples: `./Main examples`
    * Run the experiments in my thesis: `./Main thesis_experiments` 
 

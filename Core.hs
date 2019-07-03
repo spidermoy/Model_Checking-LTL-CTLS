@@ -368,7 +368,7 @@ instance Show PathF where
                      St s@(Var _)      -> "X" ++ show s
                      St s@(Neg _)      -> "X" ++ show s
                      St s@(_)          -> "X" ++ show q
-                     X q1              -> "X" ++ show q
+                     X _               -> "X" ++ show q
                      U (St (Neg "")) _ -> "X" ++ show q
                      V (St (Var "")) _ -> "X" ++ show q
                      _                 -> "X(" ++ show q ++ ")"
