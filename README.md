@@ -31,7 +31,8 @@ This verifier extends naturally to the CTL★ temporal logic (and thus, to the C
 * [GHC (The Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
 * [Haskell Cabal](https://www.haskell.org/cabal/)
 * random library (`cabal install random`)
-* [nuXmv](https://nuxmv.fbk.eu/)
+* The new symbolic model checker [nuXmv](https://nuxmv.fbk.eu/)
+(don't forget edit the location path in the file `Core.hs`).
 
 ## How to use:
 
