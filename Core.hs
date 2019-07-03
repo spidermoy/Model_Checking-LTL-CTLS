@@ -365,11 +365,13 @@ instance Show PathF where
              DisyP p1 p2               -> "(" ++ show p1 ++ ") ⋁ (" ++ show p2 ++ ")"
              -- neXt state
              X q -> case q of
-                     St s@(Var _) -> "X" ++ show s
-                     St s@(Neg _) -> "X" ++ show s
-                     St s@(_)     -> "X" ++ show q
-                     X q1         -> "X" ++ show q
-                     _            -> "X(" ++ show q ++ ")"
+                     St s@(Var _)      -> "X" ++ show s
+                     St s@(Neg _)      -> "X" ++ show s
+                     St s@(_)          -> "X" ++ show q
+                     X q1              -> "X" ++ show q
+                     U (St (Neg "")) _ -> "X" ++ show q
+                     V (St (Var "")) _ -> "X" ++ show q
+                     _                 -> "X(" ++ show q ++ ")"
              -- Until
              U (St (Neg "")) p2@(St _) -> "F" ++ show p2
              U (St (Neg "")) p2        -> "F(" ++ show p2 ++ ")"
