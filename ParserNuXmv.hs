@@ -6,11 +6,11 @@ import ParserForms
 write_nuxmv::KripkeS->[State]->[State]->[String]->Either [PathF] [StateF]->Int->[Int]->IO ()
 write_nuxmv ks@(KS (_, r, l)) states init vars forms lforms [ranInit, ranNumInit, ranKS, ranF] =
     writeFile smv_output
-        (  ("-- Semilla init: "      ++ show ranInit)    ++
-         ("\n-- Semilla NumInit: "   ++ show ranNumInit) ++
-         ("\n-- Semilla KS: "        ++ show ranKS)      ++
-         ("\n-- Semilla F: "         ++ show ranF)       ++
-         ("\n-- Longitud fórmulas: " ++ show lforms)     ++ "\n\n\n" ++
+        (  ("-- init seed: "      ++ show ranInit)    ++
+         ("\n-- NumInit seed: "   ++ show ranNumInit) ++
+         ("\n-- KS seed: "        ++ show ranKS)      ++
+         ("\n-- F seed: "         ++ show ranF)       ++
+         ("\n-- Depth of the formulas: " ++ show lforms)     ++ "\n\n\n" ++
         "MODULE main\n\n" ++
         "VAR\n"++ let f = \vs -> case vs of
                                    [v]  -> v ++ ": boolean;\n\n\n"
