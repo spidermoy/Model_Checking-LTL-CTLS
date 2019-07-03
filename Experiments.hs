@@ -126,7 +126,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                                                  nuXmv_out       = drop 26 nuXmv_out_lines in
                                              concat [l ++ "\n" | l <- nuXmv_out]
                     putStrLn salida_nuXmv_forms
-                    putStrLn $ "\tTiempo de verificación: " ++ (show $ diffUTCTime end start)
+                    putStrLn $ "\tVerification time: " ++ (show $ diffUTCTime end start)
 
 
 thesis_experiments::IO ()
