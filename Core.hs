@@ -225,10 +225,10 @@ mcALTLc ks σ = dfs ks σ []
                                   _  -> do
                                          bs <- sequence [dfs ks σ₁ (σ:stack) | σ₁ <- σs]
                                          return (and bs)
-     finiteC ((Assrt (s, _Φ)):stack) = error $ "\n\n\tFinite counterexample:\n\n" ++
+     finiteC ((Assrt (s, _Φ)):stack) = error $ "\n\n\tFinite counterexample\n\n" ++
                                         "s" ++ show s ++ " ⊬ " ++ (show $ toList _Φ) ++ "\n" ++
                                         concat [show σ ++ "\n" | σ <- filter (\(Assrt (s, _)) -> s >= 0) stack]
-     cycleC (σ:stack) = error $ "\n\n\tU-Cycle detected:\n\n" ++
+     cycleC (σ:stack) = error $ "\n\n\tU-Cycle detected\n\n" ++
                         concat [if   σ_ == σ
                                 then "--> " ++ show σ_ ++ "\n"
                                 else "    " ++ show σ_ ++ "\n" | σ_ <- filter (\(Assrt (s, _)) -> s >= 0) (σ:stack)]
