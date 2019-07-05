@@ -16,6 +16,7 @@ _Haskell is faster than C++, more concise than Perl, more regular than Python, m
 
 This repository contains my work for obtain my computer scientist master degree: a simple model checker
 for temporal logics written in [Haskell](https://www.haskell.org/).
+My thesis is [here](http://132.248.9.195/ptd2018/octubre/0781565/Index.html).
 This work simplifies and improves Girish Bhat, Rance Cleaveland and Orna Grumberg work.
 See [Efficient On-the-Fly Model Checking for CTL★](https://www.semanticscholar.org/paper/Eecient-On-the-fly-Model-Checking-for-Ctl-Bhat-Cleaveland/e7dbc6e9ff14c98d61af98247e79a3b2058cbfff) for more details.
 ([This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains an
