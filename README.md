@@ -19,8 +19,6 @@ for temporal logics written in [Haskell](https://www.haskell.org/).
 My thesis is [here](http://132.248.9.195/ptd2018/octubre/0781565/Index.html).
 This work simplifies and improves Girish Bhat, Rance Cleaveland and Orna Grumberg work.
 See [Efficient On-the-Fly Model Checking for CTL★](https://www.semanticscholar.org/paper/Eecient-On-the-fly-Model-Checking-for-Ctl-Bhat-Cleaveland/e7dbc6e9ff14c98d61af98247e79a3b2058cbfff) for more details.
-([This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains an
-implementation of Bhat, Cleaveland and Grumberg original algorithm.)
 
 In summary, this repository contains a model verifier for LTL temporal logic, which, does not use Büchi's 
 Automatons or Strongly Connected Components, is only based on formal semantics.
@@ -56,3 +54,5 @@ _n_ and _m_ are positive integers.
    * Run a specific LTL or CTL experiment by using their initial seeds comparing with nuXmv: `./Main seeds nuXmv ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
    * Run simple LTL and CTL examples: `./Main examples`
    * Run the experiments in my thesis: `./Main thesis_experiments` 
+
+###### [This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains an implementation of Bhat, Cleaveland and Grumberg original algorithm.
