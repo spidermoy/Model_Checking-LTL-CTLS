@@ -45,7 +45,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
        str <- newEmptyMVar
        run_experiment experiment vars init states ks str
     where
-      run_experiment exp vars init states ks str = 
+      run_experiment exp vars init states ks str =
                      let forms = random_forms exp in
                      do
                       print_forms forms
@@ -63,19 +63,19 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
       print_forms (Left fs)  = putStrLn $ "Specifications: " ++ show fs
       print_forms (Right fs) = putStrLn $ "Specifications: " ++ show fs
       callmc exp forms ks init str = case exp of
-                                   LTL  -> let Left fs  = forms in call_LTLmodelChecker fs ks init str
-                                   LTLc -> let Left fs  = forms in call_LTLmodelChecker_CounterExample fs ks init
-                                   CTL  -> let Right fs = forms in call_CTLmodelChecker fs ks init str
-      call_LTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
-                                          putMVar str $! show f ++ " : " ++ show (mcALTL_set ks ss f)
-                                                )
-      call_LTLmodelChecker_CounterExample = \fs ks ss -> forM_ fs (\f -> do
-                                            putStr $ show f ++ " : "
-                                            mcALTLc_set ks ss f
-                                                )
-      call_CTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
-                                       putMVar str $! show f ++ " : " ++ show (mcCTLS_set (ks, ss) f)
-                                                )
+                                   LTL  -> let Left fs  = forms in
+                                           forM_ fs (\f -> forkIO $
+                                                putMVar str $! show f ++ " : " ++ show (mcALTL_set ks init f)
+                                            )
+                                   LTLc -> let Left fs  = forms in
+                                           forM_ fs (\f -> do
+                                              putStr $ show f ++ " : "
+                                              mcALTLc_set ks init f
+                                            )
+                                   CTL  -> let Right fs = forms in
+                                           forM_ fs (\f -> forkIO $
+                                               putMVar str $! show f ++ " : " ++ show (mcCTLS_set (ks, init) f)
+                                            )
       print_type_experiment exp = case exp of
                                     LTL  -> putStrLn "\n\tmcALTL:\n"
                                     LTLc -> putStrLn "\n\tmcALTLc:\n"
