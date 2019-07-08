@@ -3,7 +3,7 @@ module Experiments where
 import Data.List(sort, nub)
 import Data.Set(singleton)
 import System.Random(mkStdGen, randomIO, randoms, randomR, randomRIO, randomRs)
-import Control.Monad(forM_, replicateM_)
+import Control.Monad(forM_, replicateM_, when)
 import Data.Time(getCurrentTime, diffUTCTime)
 import System.Process(readProcess)
 import Control.Concurrent(forkIO, MVar, newEmptyMVar, putMVar, takeMVar)
@@ -33,16 +33,6 @@ random_experiment experiment n lforms nuXmv = do
 seeds_experiment::TypeExperiment->[Int]->Int->Int->Bool->IO ()
 seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
    let vars                 = ["p" ++ show j | j <- [0 .. n-1]]
-       call_LTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
-                                          putMVar str $! show f ++ " : " ++ show (mcALTL_set ks ss f)
-                                                )
-       call_LTLmodelChecker_CounterExample = \fs ks ss -> forM_ fs (\f -> do
-                                            putStr $ show f ++ " : "
-                                            mcALTLc_set ks ss f
-                                                )
-       call_CTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
-                                       putMVar str $! show f ++ " : " ++ show (mcCTLS_set (ks, ss) f)
-                                                )
    in do
        let suc_ks                  = randoms (mkStdGen ranKS) :: [Int]
            k                       = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
@@ -53,72 +43,46 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
        putStrLn $ "Depth of the formulas: "     ++ show lforms
        putStrLn $ "Initial states number: "     ++ show k
        str <- newEmptyMVar
-       case experiment of
-         LTL  -> let forms = sort $ randomFormsLTL lforms n ranF in
-                do
-                 putStrLn $ "Formulas: " ++ show forms
-                 if   nuXmv
-                 then do
-                    putStrLn "\n[Writing nuXmv file...]"
-                    write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
-                    putStrLn "[nuXmv file was written]"
-                    putStrLn "\n\tmcALTL:\n"
-                    start <- getCurrentTime
-                    call_LTLmodelChecker forms ks init str
-                    replicateM_ 3 (takeMVar str >>= putStrLn)
-                    end   <- getCurrentTime
-                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
-                    nuXmv_experiment
-                 else do
-                    putStrLn "\n\tmcALTL:\n"
-                    start <- getCurrentTime
-                    call_LTLmodelChecker forms ks init str
-                    replicateM_ 3 (takeMVar str >>= putStrLn)
-                    end   <- getCurrentTime
-                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
-         LTLc -> let forms = sort $ randomFormsLTL lforms n ranF in
-                 do
-                  putStrLn $ "Formulas: " ++ show forms ++ "\n"
-                  if   nuXmv
-                  then do
-                    putStrLn "\n[Writing nuXmv file...]"
-                    write_nuxmv ks states init vars (Left forms) lforms [ranInit, ranNumInit, ranKS, ranF]
-                    putStrLn "[nuXmv file was written]"
-                    putStrLn "\n\tmcALTLc:\n"
-                    start <- getCurrentTime
-                    call_LTLmodelChecker_CounterExample forms ks init
-                    end   <- getCurrentTime
-                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
-                    nuXmv_experiment
-                  else do
-                    putStrLn "\n\tmcALTLc:\n"
-                    start <- getCurrentTime
-                    call_LTLmodelChecker_CounterExample forms ks init
-                    end   <- getCurrentTime
-                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
-         CTL  -> let forms = sort $ randomFormsCTL lforms n ranF in
-                 do
-                  putStrLn $ "Forms: " ++ show forms
-                  if   nuXmv
-                  then do
-                    putStrLn "\n[Writing nuXmv file...]"
-                    write_nuxmv ks states init vars (Right forms) lforms [ranInit, ranNumInit, ranKS, ranF]
-                    putStrLn "[nuXmv file was written]"
-                    putStrLn "\n\tmcCTL★:\n"
-                    start <- getCurrentTime
-                    call_CTLmodelChecker forms ks init str
-                    replicateM_ 3 (takeMVar str >>= putStrLn)
-                    end   <- getCurrentTime
-                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
-                    nuXmv_experiment
-                  else do
-                    putStrLn "\n\tmcCTL★:\n"
-                    start <- getCurrentTime
-                    call_CTLmodelChecker forms ks init str
-                    replicateM_ 3 (takeMVar str >>= putStrLn)
-                    end   <- getCurrentTime
-                    putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
+       run_experiment experiment vars init states ks str
     where
+      run_experiment exp vars init states ks str = 
+                     let forms = random_forms exp in
+                     do
+                      print_forms forms
+                      when nuXmv (do
+                                    putStrLn "\n[Writing nuXmv file...]"
+                                    write_nuxmv ks states init vars forms lforms [ranInit, ranNumInit, ranKS, ranF]
+                                    putStrLn "[nuXmv file was written]")
+                      print_type_experiment exp
+                      start <- getCurrentTime
+                      callmc exp forms ks init str
+                      replicateM_ 3 (takeMVar str >>= putStrLn)
+                      end   <- getCurrentTime
+                      putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
+                      when nuXmv nuXmv_experiment
+      print_forms (Left fs)  = putStrLn $ "Specifications: " ++ show fs
+      print_forms (Right fs) = putStrLn $ "Specifications: " ++ show fs
+      callmc exp forms ks init str = case exp of
+                                   LTL  -> let Left fs  = forms in call_LTLmodelChecker fs ks init str
+                                   LTLc -> let Left fs  = forms in call_LTLmodelChecker_CounterExample fs ks init
+                                   CTL  -> let Right fs = forms in call_CTLmodelChecker fs ks init str
+      call_LTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
+                                          putMVar str $! show f ++ " : " ++ show (mcALTL_set ks ss f)
+                                                )
+      call_LTLmodelChecker_CounterExample = \fs ks ss -> forM_ fs (\f -> do
+                                            putStr $ show f ++ " : "
+                                            mcALTLc_set ks ss f
+                                                )
+      call_CTLmodelChecker = \fs ks ss str -> forM_ fs (\f -> forkIO $
+                                       putMVar str $! show f ++ " : " ++ show (mcCTLS_set (ks, ss) f)
+                                                )
+      print_type_experiment exp = case exp of
+                                    LTL  -> putStrLn "\n\tmcALTL:\n"
+                                    LTLc -> putStrLn "\n\tmcALTLc:\n"
+                                    CTL  -> putStrLn "\n\tmcCTL★:\n"
+      random_forms exp = case exp of
+                           CTL -> Right $ sort $ randomFormsCTL lforms n ranF
+                           _   -> Left  $ sort $ randomFormsLTL lforms n ranF
       nuXmv_experiment = do
                     putStrLn "\tnuXmv:"
                     start        <- getCurrentTime
