@@ -14,7 +14,7 @@ import RandomKS
 import ParserNuXmv
 
 
-data TypeExperiment = LTL | LTLc | CTL
+data TypeExperiment = LTL | LTLc | CTL deriving Eq
 
 
 random_experiment::TypeExperiment->Int->Int->Bool->IO ()
@@ -56,7 +56,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
                       print_type_experiment exp
                       start <- getCurrentTime
                       callmc exp forms ks init str
-                      replicateM_ 3 (takeMVar str >>= putStrLn)
+                      when (experiment /= LTLc) (replicateM_ 3 (takeMVar str >>= putStrLn))
                       end   <- getCurrentTime
                       putStrLn $ "\n\tVerification time: " ++ (show $ diffUTCTime end start) ++ "\n"
                       when nuXmv nuXmv_experiment
