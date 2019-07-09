@@ -34,11 +34,11 @@ seeds_experiment::TypeExperiment->[Int]->Int->Int->Bool->IO ()
 seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
    let vars                 = ["p" ++ show j | j <- [0 .. n-1]]
    in do
-       let suc_ks                  = randoms (mkStdGen ranKS) :: [Int]
-           k                       = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
-           init                    = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
-           states                  = [0 .. (2^n - 1)]
-           ks@(KS (nstates, r, l)) = randomKS n suc_ks
+       let suc_ks            = randoms (mkStdGen ranKS) :: [Int]
+           k                 = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
+           init              = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
+           states            = [0 .. (2^n - 1)]
+           ks@(KS (_, r, l)) = randomKS n suc_ks
        putStrLn $ "\nKripke structure size: 2^" ++ show n
        putStrLn $ "Depth of the formulas: "     ++ show lforms
        putStrLn $ "Initial states number: "     ++ show k
