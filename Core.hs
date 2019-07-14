@@ -274,6 +274,7 @@ mcCTLS ks@(KS (_, _, l)) (s, φ) =
            A ф         -> update (eval_mcALTL ks (Assrt (s, singleton ф)))
            E ф         -> update ((not . eval_mcALTL ks) (Assrt (s, (singleton . negP) ф)))
    where
+     update::Bool->StateM Vs Bool
      update b = do
                  when b (insert_Vs (s, φ))
                  return b
