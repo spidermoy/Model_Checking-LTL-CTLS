@@ -40,7 +40,7 @@ seeds_experiment experiment [ranInit, ranNumInit, ranKS, ranF] n lforms nuXmv =
            states            = [0 .. (2^n - 1)]
            ks@(KS (_, r, l)) = randomKS n suc_ks
        putStrLn $ "\nKripke structure size: 2^" ++ show n
-       putStrLn $ "Depth of the formulas: "     ++ show lforms
+       putStrLn $ "Formulas depth: "     ++ show lforms
        putStrLn $ "Initial states number: "     ++ show k
        str <- newEmptyMVar
        run_experiment experiment vars init states ks str
