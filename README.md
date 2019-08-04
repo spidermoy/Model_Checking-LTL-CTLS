@@ -35,24 +35,24 @@ This verifier extends naturally to the CTL★ temporal logic (and thus, to the C
 
 ## How to use:
 
-1. Copile the project:
+1. Installation:
 
-`ghc -O2 --make -threaded Main.hs`
+`cabal new-build`
 
 2. How to use it:
 
 Let _n_ the number of variables, and _m_ the depth of the formulas of the experiments. Both
 _n_ and _m_ are positive integers.
 
-   * Run a random LTL (or CTL) experiment: `./Main random LTL n m` or `./Main random CTL n m`
-   * Run a random LTL (or CTL) experiment comparing with nuXmv: `./Main random nuXmv LTL n m` or `./Main random nuXmv CTL n m`
-   * Run a random LTL experiment with counterexamples: `./Main random LTLc n m`
-   * Run a random LTL experiment with counterexamples comparing with nuXmv: `./Main random nuXmv LTLc n m`
-   * Run a specific LTL experiment with counterexamples by using their initial seeds: `./Main seeds ranInit ranNumInit ranKS ranF LTLc n m`
-   * Run a specific LTL experiment with counterexamples by using their initial seeds comparing with nuXmv: `./Main seeds nuXmv ranInit ranNumInit ranKS ranF LTLc n m`
-   * Run a specific LTL or CTL experiment by using their initial seeds: `./Main seeds ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
-   * Run a specific LTL or CTL experiment by using their initial seeds comparing with nuXmv: `./Main seeds nuXmv ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
-   * Run simple LTL and CTL examples: `./Main examples`
-   * Run the experiments in my thesis: `./Main thesis_experiments` 
+   * Run a random LTL (or CTL) experiment: `cabal new-run model-check random LTL n m` or `cabal new-run model-check random CTL n m`
+   * Run a random LTL (or CTL) experiment comparing with nuXmv: `cabal new-run model-check random nuXmv LTL n m` or `cabal new-run model-check random nuXmv CTL n m`
+   * Run a random LTL experiment with counterexamples: `cabal new-run model-check random LTLc n m`
+   * Run a random LTL experiment with counterexamples comparing with nuXmv: `cabal new-run model-check random nuXmv LTLc n m`
+   * Run a specific LTL experiment with counterexamples by using their initial seeds: `cabal new-run model-check seeds ranInit ranNumInit ranKS ranF LTLc n m`
+   * Run a specific LTL experiment with counterexamples by using their initial seeds comparing with nuXmv: `cabal new-run model-check seeds nuXmv ranInit ranNumInit ranKS ranF LTLc n m`
+   * Run a specific LTL or CTL experiment by using their initial seeds: `cabal new-run model-check seeds ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
+   * Run a specific LTL or CTL experiment by using their initial seeds comparing with nuXmv: `cabal new-run model-check seeds nuXmv ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
+   * Run simple LTL and CTL examples: `cabal new-run model-check examples`
+   * Run the experiments in my thesis: `cabal new-run model-check thesis_experiments` 
 
 ###### [This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains an implementation of Bhat, Cleaveland and Grumberg original algorithm.
