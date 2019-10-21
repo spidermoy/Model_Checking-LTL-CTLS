@@ -17,7 +17,7 @@ category:            Math
 extra-source-files:  CHANGELOG.md, README.md
 
 
-executable model-check
+executable             model-check
   main-is:             Main.hs
   other-modules:       Core,
                        Examples,
@@ -28,7 +28,7 @@ executable model-check
                        RandomKS,
                        StateMonad
   -- other-extensions:
-  ghc-options: -O2 -threaded
+  ghc-options:         -O2 -threaded
   build-depends:       base ^>=4.12.0.0,
                        containers ^>=0.6.0.1,
                        random ^>=1.1,
