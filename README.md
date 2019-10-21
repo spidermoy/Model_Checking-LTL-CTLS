@@ -47,10 +47,10 @@ _n_ and _m_ are positive integers.
    * Run a random LTL (or CTL) experiment comparing with nuXmv: `cabal new-run model-check random nuXmv LTL n m` or `cabal new-run model-check random nuXmv CTL n m`
    * Run a random LTL experiment with counterexamples: `cabal new-run model-check random LTLc n m`
    * Run a random LTL experiment with counterexamples comparing with nuXmv: `cabal new-run model-check random nuXmv LTLc n m`
-   * Run a specific LTL experiment with counterexamples by using their initial seeds: `cabal new-run model-check seeds ranInit ranNumInit ranKS ranF LTLc n m`
-   * Run a specific LTL experiment with counterexamples by using their initial seeds comparing with nuXmv: `cabal new-run model-check seeds nuXmv ranInit ranNumInit ranKS ranF LTLc n m`
-   * Run a specific LTL or CTL experiment by using their initial seeds: `cabal new-run model-check seeds ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
-   * Run a specific LTL or CTL experiment by using their initial seeds comparing with nuXmv: `cabal new-run model-check seeds nuXmv ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
+   * Run a specific LTL experiment with counterexamples by using their initial seeds: `cabal new-run -- model-check seeds ranInit ranNumInit ranKS ranF LTLc n m`
+   * Run a specific LTL experiment with counterexamples by using their initial seeds comparing with nuXmv: `cabal new-run -- model-check seeds nuXmv ranInit ranNumInit ranKS ranF LTLc n m`
+   * Run a specific LTL or CTL experiment by using their initial seeds: `cabal new-run -- model-check seeds ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
+   * Run a specific LTL or CTL experiment by using their initial seeds comparing with nuXmv: `cabal new-run -- model-check seeds nuXmv ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
    * Run simple LTL and CTL examples: `cabal new-run model-check examples`
    * Run the experiments in my thesis: `cabal new-run model-check thesis_experiments` 
 
