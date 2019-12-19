@@ -1,4 +1,4 @@
-# Simple and Efficient On-the-Fly Model Checking for LTL, CTL and CTL★
+# Simple and Efficient On-the-Fly Model Checking for LTL, CTL and CTL*
 
 _While simulation and testing explore some of the possible behaviors and scenarios of the system, leaving open the question of whether the unexplored trajectories may contain the fatal bug, formal verification conducts an exhaustive exploration of all possible behaviors._
 
