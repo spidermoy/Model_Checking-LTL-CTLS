@@ -18,11 +18,11 @@ This repository contains my work for obtain my computer scientist master degree:
 for temporal logics written in [Haskell](https://www.haskell.org/).
 My thesis is [here](http://132.248.9.195/ptd2018/octubre/0781565/Index.html).
 This work simplifies and improves Girish Bhat, Rance Cleaveland and Orna Grumberg work.
-See [Efficient On-the-Fly Model Checking for CTL★](https://www.semanticscholar.org/paper/Eecient-On-the-fly-Model-Checking-for-Ctl-Bhat-Cleaveland/e7dbc6e9ff14c98d61af98247e79a3b2058cbfff) for more details.
+See [Efficient On-the-Fly Model Checking for CTL*](https://www.semanticscholar.org/paper/Eecient-On-the-fly-Model-Checking-for-Ctl-Bhat-Cleaveland/e7dbc6e9ff14c98d61af98247e79a3b2058cbfff) for more details.
 
 In summary, this repository contains a model verifier for LTL temporal logic, which, does not use Büchi's 
 Automatons or Strongly Connected Components, is only based on formal semantics.
-This verifier extends naturally to the CTL★ temporal logic (and thus, to the CTL logic).
+This verifier extends naturally to the CTL* temporal logic (and thus, to the CTL logic).
 
 
 ## Requirements:
