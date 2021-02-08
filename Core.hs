@@ -7,7 +7,6 @@ import Control.Exception
 import StateMonad
 
 
-{- Atomic formulas are strings -}
 type At = String
 
 {- State formulas -}
@@ -20,10 +19,10 @@ data StateF = Var At
 
 {- Path formulas -}
 data PathF = St StateF
-           | DisyP PathF PathF 
-           | ConjP PathF PathF 
-           | U PathF PathF 
-           | V PathF PathF 
+           | DisyP PathF PathF
+           | ConjP PathF PathF
+           | U PathF PathF
+           | V PathF PathF
            | X PathF deriving (Eq, Ord)
 
 
@@ -31,7 +30,7 @@ data PathF = St StateF
 negS::StateF->StateF
 negS φ = case φ of
           Var a       -> Neg a
-          Neg a       -> Var a 
+          Neg a       -> Var a
           ConjS φ₁ φ₂ -> DisyS (negS φ₁) (negS φ₂)
           DisyS φ₁ φ₂ -> ConjS (negS φ₁) (negS φ₂)
           A ф         -> E $ negP ф
@@ -80,20 +79,20 @@ impS φ₁ φ₂ = if   φ₁ == φ₂
              else DisyS (negS φ₁) φ₂
 
 impP::PathF->PathF->PathF
-impP ф₁ ф₂ = if   ф₁ == ф₂ 
+impP ф₁ ф₂ = if   ф₁ == ф₂
              then St top
              else DisyP (negP ф₁) ф₂
 
 
 {- States are integers. -}
-type State = Int 
+type State = Int
 
 {- A Kripke Structure is a triple (n, r, l). 'n' indicates the states range [0 .. n].
    'r' is the transition function and 'l' maps states to variable sets. -}
 data KripkeS = KS (Int, State->[State], State->(At->Bool))
 
 
-{- Essentially, an assertion is a pair (s, Φ) and means: 
+{- Essentially, an assertion is a pair (s, Φ) and means:
    at least one formula ф ∊ Φ holds on 's' -}
 data Assertion = Assrt (State, Set PathF) deriving (Eq, Ord)
 
@@ -117,14 +116,14 @@ subgoals ks@(KS (_, r, _)) σ@(Assrt (s, _Φ)) =
    else let  ф = elemAt 0 _Φ in
         case ф of
           St φ        -> if   eval_mcCTLS ks (s, φ)
-                         then T 
+                         then T
                          else Subg [deleteF ф σ]
           DisyP ф₁ ф₂ -> Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ]
           ConjP ф₁ ф₂ -> if   ф₁ == ф₂ -- ф⋀ф ≡ ф
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          else Subg [insertF ф₁ $ deleteF ф σ,
                                     insertF ф₂ $ deleteF ф σ]
-          U ф₁ ф₂     -> if   ф₁ == ф₂ -- фUф ≡ ф 
+          U ф₁ ф₂     -> if   ф₁ == ф₂ -- фUф ≡ ф
                          then Subg [insertF ф₁ $ deleteF ф σ]
                          -- ф₁Uф₂ ≡ (ф₁⋁ф₂)⋀(ф₂⋁(X(ф₁Uф₂)))
                          else Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ,
@@ -160,12 +159,12 @@ elem_Vp::Assertion->StateM Vp Bool
 elem_Vp σ = ST $ \v -> (member σ v, v)
 
 insert_Vp::Assertion->StateM Vp ()
-insert_Vp σ = ST $ \v -> ((), insert σ v) 
+insert_Vp σ = ST $ \v -> ((), insert σ v)
 
 
 
 mcALTL::KripkeS->Assertion->StateM Vp Bool
-mcALTL ks σ = dfs ks σ [] 
+mcALTL ks σ = dfs ks σ []
    where
      dfs::KripkeS->Assertion->[Assertion]->StateM Vp Bool
      dfs ks σ stack = do
@@ -258,7 +257,7 @@ mcCTLS::KripkeS->(State, StateF)->StateM Vs Bool
 mcCTLS ks@(KS (_, _, l)) (s, φ) =
    do
     s_φ_in_Vs <- elem_Vs (s, φ)
-    if   s_φ_in_Vs 
+    if   s_φ_in_Vs
     then return True
     else case φ of
            Var a       -> update (l s a)
@@ -293,7 +292,7 @@ nuXmv_path = "/home/moy/nuXmv/bin/nuXmv"
 smv_output = "/home/moy/nuXmv/bin/ejemplo_random.smv"
 {-====================================================================================-}
 
-{- 
+{-
  ******************
  * DATA INSTANCES *
  ****************** -}
@@ -387,4 +386,3 @@ instance Show PathF where
              V p1@(St _) p2            -> show p1 ++ " V (" ++ show p2 ++")"
              V p1 p2@(St _)            -> "(" ++ show p1 ++ ") V " ++ show p2
              V p1 p2                   -> "(" ++ show p1 ++ ") V (" ++ show p2 ++ ")"
-
