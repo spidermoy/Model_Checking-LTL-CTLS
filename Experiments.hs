@@ -7,10 +7,17 @@ import Data.Time(getCurrentTime, diffUTCTime)
 import System.Process(readProcess)
 import Control.Concurrent(forkIO, newEmptyMVar, putMVar, takeMVar)
 
-import Core
-import RandomForms
-import RandomKS
-import ParserNuXmv
+import Core(
+    KripkeS(KS),
+    mcALTLSet,
+    mcALTLcSet,
+    mcCTLSSet,
+    nuXmvPath,
+    smvOutput
+  )
+import RandomForms(randomFormsLTL, randomFormsCTL)
+import RandomKS(randomKS)
+import ParserNuXmv(writeNuXmv)
 
 
 data TypeExperiment = LTL | LTLc | CTL deriving Eq
@@ -33,10 +40,10 @@ seedsExperiment::TypeExperiment->(Int,Int,Int,Int)->Int->Int->Bool->IO ()
 seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
   let vars = ["p" ++ show j | j <- [0 .. n-1]] in
   do
-    let suc_ks            = randoms (mkStdGen ranKS) :: [Int]
-        k                 = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
-        inits             = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
-        states            = [0 .. (2^n - 1)]
+    let suc_ks    = randoms (mkStdGen ranKS) :: [Int]
+        k         = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
+        inits     = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
+        states    = [0 .. (2^n - 1)]
         ks@(KS _) = randomKS n suc_ks
     putStrLn $ "\nKripke structure size: 2^" ++ show n
     putStrLn $ "Formulas depth: "            ++ show lforms

@@ -51,7 +51,7 @@ ltlExamples = [
   ]
 
 
-{- LTL examples from page 213. -}
+{- CTL examples from page 213. -}
 ctlExamples::[(State, StateF)]
 ctlExamples = [
     (0, ConjS (Var "p") (Var "q")),
@@ -80,10 +80,10 @@ examples = do
   putStrLn "\t L(1) = [q, r]"
   putStrLn "\t L(2) = [r]"
   putStrLn "\n\tLTL EXAMPLES:"
-  forM_ ltlExamples (\(states, ф) -> forM_ states (\s -> do
+  forM_ ltlExamples $ \(states, ф) -> forM_ states (\s -> do
     let σ = Assrt (s, singleton ф)
     putStr $ show σ ++ ": "
-    print $ evalMcALTL kripkeSExample σ))
+    print $ evalMcALTL kripkeSExample σ)
   putStrLn "\n\tCTL EXAMPLES:"
   forM_ ctlExamples (\(s, φ) -> do
     putStr $ show (s, φ) ++ ": "

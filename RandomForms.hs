@@ -7,11 +7,13 @@ import System.Random(mkStdGen,randomRs)
 --Dados n,m,s, crea fórmulas LTL aleatorias de longitud n con m variables utilizando la semilla s.
 randomFormsLTL::Int->Int->Int->[PathF]
 randomFormsLTL n m s = let vars = ["p"++show j | j <- [0..m-1]]
-                           tipF = randomRs (0,6) (mkStdGen s)   :: [Int]
+                           tipF = randomRs (0,6)   (mkStdGen s) :: [Int]
                            indV = randomRs (0,m-1) (mkStdGen s) :: [Int] in
-                       [randF tipF indV vars 0 0 n,
-                       randF tipF indV vars 1 5 n,
-                       randF tipF indV vars 2 10 n]
+                       [
+                         randF tipF indV vars 0 0 n,
+                         randF tipF indV vars 1 5 n,
+                         randF tipF indV vars 2 10 n
+                       ]
   where
     randF _ indV vars k _ 0 = let k' = mod k m in
                               if   mod (indV !! k') 6 == 0
@@ -31,11 +33,13 @@ randomFormsLTL n m s = let vars = ["p"++show j | j <- [0..m-1]]
 --Dados n,m,s, crea fórmulas CTL aleatorias de longitud n con m variables utilizando la semilla s.
 randomFormsCTL::Int->Int->Int->[StateF]
 randomFormsCTL n m s = let vars = ["p"++show j | j<-[0..m-1]]
-                           tipF = randomRs (0,9) (mkStdGen s)   :: [Int]
+                           tipF = randomRs (0,9)   (mkStdGen s) :: [Int]
                            indV = randomRs (0,m-1) (mkStdGen s) :: [Int] in
-                       [randF tipF indV vars 0 0 n,
-                       randF tipF indV vars 1 5 n,
-                       randF tipF indV vars 2 10 n]
+                       [
+                         randF tipF indV vars 0 0 n,
+                         randF tipF indV vars 1 5 n,
+                         randF tipF indV vars 2 10 n
+                       ]
   where
     randF _    indV vars k _ 0 = let k' = mod k m in
                                  if   mod (indV !! k') 6 == 0

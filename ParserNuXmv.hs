@@ -6,12 +6,12 @@ import ParserForms(pathFormsToFile, stateFormsToFile)
 
 writeNuXmv::KripkeS->[State]->[State]->[String]->Either [PathF] [StateF]->Int->(Int,Int,Int,Int)->IO ()
 writeNuXmv (KS (_, r, l)) states inits vars forms lforms (ranInit, ranNumInit, ranKS, ranF) =
-  writeFile smvOutput
-    (  ("-- init seed: "             ++ show ranInit)    ++
-     ("\n-- NumInit seed: "          ++ show ranNumInit) ++
-     ("\n-- KS seed: "               ++ show ranKS)      ++
-     ("\n-- F seed: "                ++ show ranF)       ++
-     ("\n-- Depth of the formulas: " ++ show lforms)     ++ "\n\n\n" ++
+  writeFile smvOutput $
+    ("-- init seed: "             ++ show ranInit)    ++
+    ("\n-- NumInit seed: "          ++ show ranNumInit) ++
+    ("\n-- KS seed: "               ++ show ranKS)      ++
+    ("\n-- F seed: "                ++ show ranF)       ++
+    ("\n-- Depth of the formulas: " ++ show lforms)     ++ "\n\n\n" ++
     "MODULE main\n\n" ++
     "VAR\n" ++
         let f vs = case vs of
@@ -43,4 +43,4 @@ writeNuXmv (KS (_, r, l)) states inits vars forms lforms (ranInit, ranNumInit, r
                         _     -> "" in
                  f'' states ++ (case forms of
                                 Left  ltl_forms -> pathFormsToFile  ltl_forms
-                                Right ctl_forms -> stateFormsToFile ctl_forms))
+                                Right ctl_forms -> stateFormsToFile ctl_forms)

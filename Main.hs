@@ -38,5 +38,3 @@ main = do
       "LTLc" -> seedsExperiment LTLc (read ranInit, read ranNumInit, read ranKS, read ranF) (read n_vars) (read forms_n) nuXmv
       "CTL"  -> seedsExperiment CTL  (read ranInit, read ranNumInit, read ranKS, read ranF) (read n_vars) (read forms_n) nuXmv
       _      -> putStrLn "Las opciones válidas son LTL, LTLc Y CTL."
-
-

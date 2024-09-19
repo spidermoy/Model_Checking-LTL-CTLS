@@ -25,4 +25,3 @@ instance Applicative (StateM s) where
 
 instance Monad (StateM s) where
   st >>= f = ST $ \s -> let (a, s') = runStateM st s in runStateM (f a) s'
-
