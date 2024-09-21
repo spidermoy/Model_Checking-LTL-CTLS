@@ -6,7 +6,7 @@ import System.Random(mkStdGen, randomR, randomRs)
 
 --Esta función genera un modelo aleatorio con 2^n estados a partir de una lista de semillas.
 randomKS::Int->[Int]->KripkeS
-randomKS n rs = KS (2^n - 1, r_random, l_random)
+randomKS n rs = KS (r_random, l_random)
   where
     r_random s    = let g = mkStdGen (rs !! s)
                         m = fst $ randomR (1, n^2) g in

@@ -22,7 +22,7 @@ import Core(
 
 {- Kripke structure from page 179. -}
 kripkeSExample::KripkeS
-kripkeSExample = KS (2, r, l)
+kripkeSExample = KS (r, l)
   where
     r 0 = [1, 2]
     r 1 = [0, 2]

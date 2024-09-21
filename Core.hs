@@ -88,7 +88,7 @@ type State = Int
 
 {- A Kripke Structure is a triple (n, r, l). 'n' indicates the states range [0 .. n].
    'r' is the transition function and 'l' maps states to variable sets. -}
-newtype KripkeS = KS (Int, State->[State], State->(At->Bool))
+newtype KripkeS = KS (State->[State], State->(At->Bool))
 
 
 {- Essentially, an assertion is a pair (s, Φ) and means:
@@ -109,7 +109,7 @@ data Subgoals = T | Subg [Assertion]
 
 {- This function follows the formal semantic for LTL -}
 subgoals::KripkeS->Assertion->Subgoals
-subgoals ks@(KS (_, r, _)) σ@(Assrt (s, _Φ)) =
+subgoals ks@(KS (r, _)) σ@(Assrt (s, _Φ)) =
   if   _Φ == empty
   then Subg []
   else let  ф = elemAt 0 _Φ in
@@ -187,7 +187,7 @@ mcALTL ks' σ' = dfs ks' σ' []
 
 
 updR::KripkeS->State->[State]->KripkeS
-updR (KS (n, r, l)) s ss = KS (n, \s' -> if s'==s then ss else r s', l)
+updR (KS (r, l)) s ss = KS (\s' -> if s'==s then ss else r s', l)
 
 evalMcALTL::KripkeS->Assertion->Bool
 evalMcALTL ks σ = evalStateM (mcALTL ks σ) empty
@@ -259,7 +259,7 @@ insertVs p = ST $ \v -> ((), insert p v)
 
 
 mcCTLS::KripkeS->(State, StateF)->StateM Vs Bool
-mcCTLS ks@(KS (_, _, l)) (s, φ) = do
+mcCTLS ks@(KS (_, l)) (s, φ) = do
   s_φ_in_Vs <- elemVs (s, φ)
   if   s_φ_in_Vs
   then return True
