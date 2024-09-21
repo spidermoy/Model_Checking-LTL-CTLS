@@ -68,18 +68,18 @@ seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
         end <- getCurrentTime
         putStrLn $ "\n\tVerification time: " ++ show (diffUTCTime end start) ++ "\n"
         when nuXmv nuXmv_experiment
-    print_forms (Left fs)  = putStrLn $ "Specifications: " ++ concatMap (("\n\t"<>) . show) fs <> "\n"
-    print_forms (Right fs) = putStrLn $ "Specifications: " ++ concatMap (("\n\t"<>) . show) fs <> "\n"
+    print_forms (Left fs)  = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
+    print_forms (Right fs) = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
     callmc experiment' forms ks inits str = case experiment' of
       LTL  -> let Left fs  = forms in
-              forM_ fs $ \f -> forkIO $ putMVar str $! show f ++ " : " ++ show (mcALTLSet ks inits f)
+              forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcALTLSet ks inits f)
       LTLc -> let Left fs  = forms in
               forM_ fs (\f -> do
-                  putStr $ show f ++ " : "
+                  putStr $ "-- specification " ++ show f ++ " : "
                   mcALTLcSet ks inits f
                )
       CTL  -> let Right fs = forms in
-              forM_ fs $ \f -> forkIO $ putMVar str $! show f ++ " : " ++ show (mcCTLSSet (ks, inits) f)
+              forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcCTLSSet (ks, inits) f)
 
     print_type_experiment exp' = case exp' of
       LTL  -> putStrLn "\n\tmcALTL:\n"
