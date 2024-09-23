@@ -50,4 +50,3 @@ traduceS f = case f of
                else "[" ++ traduceP f1 ++ " U " ++ traduceP f2 ++ "]"
     V _ f2  -> "G (" ++ traduceP f2 ++")"
     _       -> ""
-

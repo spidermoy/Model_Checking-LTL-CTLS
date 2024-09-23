@@ -1,6 +1,8 @@
 module Experiments where
 
 import Data.List(sort, nub)
+import Data.Set(singleton)
+import Data.Functor((<&>))
 import System.Random(mkStdGen, randomIO, randoms, randomR, randomRs)
 import Control.Monad(forM_, replicateM_, when)
 import Data.Time(getCurrentTime, diffUTCTime)
@@ -8,15 +10,31 @@ import System.Process(readProcess)
 import Control.Concurrent(forkIO, newEmptyMVar, putMVar, takeMVar)
 
 import Core(
+    Assertion(Assrt),
     KripkeS(KS),
+    PathF(St),
+    bot,
+    evalMcALTL,
     mcALTLSet,
     mcALTLcSet,
     mcCTLSSet,
     nuXmvPath,
     smvOutput
   )
-import RandomForms(randomFormsLTL, randomFormsCTL)
-import RandomKS(randomKS)
+import RandomForms(
+    randomFormsCTL,
+    randomFormsLTL,
+    securityG,
+    vivacidadF,
+    fmTimesX,
+    progresoG,
+    safeG,
+    permGF,
+    repeatG,
+    altG,
+    cicloCompletoG
+  )
+import RandomKS(randomKS, cycleKS)
 import ParserNuXmv(writeNuXmv)
 
 
@@ -40,11 +58,11 @@ seedsExperiment::TypeExperiment->(Int,Int,Int,Int)->Int->Int->Bool->IO ()
 seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
   let vars = ["p" ++ show j | j <- [0 .. n-1]] in
   do
-    let suc_ks    = randoms (mkStdGen ranKS) :: [Int]
-        k         = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
-        inits     = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
-        states    = [0 .. (2^n - 1)]
-        ks@(KS _) = randomKS n suc_ks
+    let suc_ks = randoms (mkStdGen ranKS) :: [Int]
+        k      = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
+        inits  = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
+        states = [0 .. (2^n - 1)]
+        ks     = randomKS n suc_ks
     putStrLn $ "\nKripke structure size: 2^" ++ show n
     putStrLn $ "Formulas depth: "            ++ show lforms
     putStrLn $ "Initial states number: "     ++ show k
@@ -59,7 +77,7 @@ seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
             do
               putStrLn "\n[Writing nuXmv file...]"
               writeNuXmv ks states inits vars forms lforms (ranInit, ranNumInit, ranKS, ranF)
-              putStrLn "[nuXmv file was written]"
+              putStrLn "[nuXmv file was written]\n"
           )
         print_type_experiment exp'
         start <- getCurrentTime
@@ -67,7 +85,7 @@ seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
         when (experiment /= LTLc) (replicateM_ 3 (takeMVar str >>= putStrLn))
         end <- getCurrentTime
         putStrLn $ "\n\tVerification time: " ++ show (diffUTCTime end start) ++ "\n"
-        when nuXmv nuXmv_experiment
+        when nuXmv nuXmvExperiment
     print_forms (Left fs)  = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
     print_forms (Right fs) = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
     callmc experiment' forms ks inits str = case experiment' of
@@ -80,7 +98,6 @@ seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
                )
       CTL  -> let Right fs = forms in
               forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcCTLSSet (ks, inits) f)
-
     print_type_experiment exp' = case exp' of
       LTL  -> putStrLn "\n\tmcALTL:\n"
       LTLc -> putStrLn "\n\tmcALTLc:\n"
@@ -88,16 +105,19 @@ seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
     random_forms exp' = case exp' of
       CTL -> Right $ sort $ randomFormsCTL lforms n ranF
       _   -> Left  $ sort $ randomFormsLTL lforms n ranF
-    nuXmv_experiment = do
-      putStrLn "\tnuXmv:"
-      start        <- getCurrentTime
-      salida_nuXmv <- readProcess nuXmvPath ["-dcx", smvOutput] []
-      end          <- getCurrentTime
-      let salida_nuXmv_forms = let nuXmv_out_lines = lines salida_nuXmv
-                                   nuXmv_out       = drop 26 nuXmv_out_lines in
-                               concat [l ++ "\n" | l <- nuXmv_out]
-      putStrLn salida_nuXmv_forms
-      putStrLn $ "\tVerification time: " ++ show (diffUTCTime end start)
+
+
+nuXmvExperiment::IO ()
+nuXmvExperiment = do
+  putStrLn "\tnuXmv:"
+  start        <- getCurrentTime
+  salida_nuXmv <- readProcess nuXmvPath ["-dcx", smvOutput] []
+  end          <- getCurrentTime
+  let salida_nuXmv_forms = let nuXmv_out_lines = lines salida_nuXmv
+                               nuXmv_out       = drop 26 nuXmv_out_lines in
+                           concat [l ++ "\n" | l <- nuXmv_out]
+  putStrLn salida_nuXmv_forms
+  putStrLn $ "\tVerification time: " ++ show (diffUTCTime end start)
 
 
 thesisExperiments::IO ()
@@ -162,3 +182,93 @@ thesisExperiments = do
     seedsExperiment CTL (-3020335431298968450, -1085283208950323474, 7907697534437260499, 1709226432342667921) 19 2 False
     putStrLn "15)"
     seedsExperiment CTL (6830968738545262399, -7400582486838530919, -5225068410809829748, 4640882333315414212) 20 2 False
+
+
+ltlExperiment::String->Int->String->Int->Bool->IO ()
+ltlExperiment ks_type n specification m nuXmv =
+  if ks_type `elem` ["cycleKS", "randomKS"] && specification `elem` ["fmTimesX","securityG","vivacidadF","progresoG","safeG","permGF","repeatG","altG","cicloCompletoG"]
+  then do
+    putStrLn $ "\nEstructura de Kripke: " ++ ks_type ++ "(" ++ show n ++ ")"
+    let (φ_m, descr) = ltl_experiment specification
+    putStrLn $ "Experimento: " ++ show φ_m
+    putStrLn descr
+    ks_n <- case ks_type of
+      "cycleKS"  -> return $ cycleKS n
+      "randomKS" -> randomIO <&> randomKS n . randoms . mkStdGen
+      _          -> return $ KS (const [], \_ _ -> False)
+    when nuXmv (do
+        putStrLn "\n[Writing nuXmv file...]"
+        writeNuXmv ks_n (if ks_type == "randomKS" then [0 .. (2^n - 1)] else [0 .. n-1]) [0] ["p" ++ show j | j <- [0 .. n-1]] (Left [φ_m]) m (0, 0, 0, 0)
+        putStrLn "[nuXmv file was written]\n"
+      )
+    putStr "\n\tmcALTL: "
+    start <- getCurrentTime
+    print $ evalMcALTL ks_n (Assrt (0, singleton φ_m))
+    end   <- getCurrentTime
+    putStrLn $ "\n\tVerification time: " ++ show (diffUTCTime end start) ++ "\n"
+    when nuXmv nuXmvExperiment
+  else putStrLn "Tipo de KS no válido o experimento no válido"
+  where
+    ltl_experiment s = case s of
+      "fmTimesX" -> (
+          fmTimesX m,
+          "\n\tF(p0∧X(p1∧X(p2∧…Xpm−1)))\n\n" ++
+          "\tLa fórmula dice que eventualmente habrá una secuencia de 𝑚 estados consecutivos donde primero 𝑝0 es verdadero, seguido de 𝑝1, etc., hasta 𝑝𝑚−1.\n\n" ++
+          "\tSi 𝑚≤𝑛 la fórmula puede satisfacerse en la estructura cíclica Mn.\n" ++
+          "\tSi 𝑚>𝑛 la fórmula no puede satisfacerse en la estructura cíclica Mn."
+        )
+      "securityG" -> (
+          securityG m,
+          "\n\tG¬(p0∧p1∧…∧pm−1)\n\n" ++
+          "\tPropiedad de seguridad (ausencia de ciertos estados):\n" ++
+          "\tNunca habrá un estado donde todas las proposiciones 𝑝0,𝑝1,…,𝑝𝑚−1 sean verdaderas simultáneamente."
+        )
+      "vivacidadF" -> (
+          vivacidadF m,
+          "\n\tF(pn−1∧Xp0)\n\n" ++
+          "\tPropiedad de vivacidad (alcanzabilidad de estados específicos):\n" ++
+          "\tEventualmente se alcanzará el último estado etiquetado con 𝑝𝑛−1 seguido del primer estado etiquetado con 𝑝0."
+        )
+      "progresoG" -> (
+          progresoG m,
+          "\n\tφprog,n = G(p0→Fp1)∧G(p1→Fp2)∧…∧G(pn−2→Fpn−1)\n\n" ++
+          "\tPropiedad de Progreso:\n" ++
+          "\tInterpretación: Si 𝑝𝑖 es verdadero, eventualmente 𝑝𝑖+1 también será verdadero, para todos los 𝑖 en el rango de 0 a 𝑛−2\n" ++
+          "\tUso: Verificar que hay un progreso secuencial en el sistema, es decir, que no se queda atrapado en un estado sin avanzar."
+        )
+      "safeG" -> (
+          safeG m,
+          "\n\tφsafe,m = G¬(q0∧X(q1∧X(…Xqm−1)))\n\n" ++
+          "\tPropiedad de Ausencia de Secuencias Peligrosas:\n" ++
+          "\tInterpretación: Nunca ocurre una secuencia de 𝑚 estados consecutivos donde primero 𝑞0 es verdadero, seguido de 𝑞1, y así sucesivamente hasta 𝑞𝑚−1.\n" ++
+          "\tUso: Prevenir secuencias peligrosas o indeseadas de eventos en el sistema."
+        )
+      "permGF" ->(
+          permGF m,
+          "\n\tφperm,k = G(Fp0→G(p0∧X(p1∧X(…Xpk−1))))\n\n" ++
+          "\tPropiedad de Permanencia:\n" ++
+          "\tInterpretación: Si 𝑝0 es verdadero alguna vez, entonces siempre habrá una secuencia repetida de 𝑝0,𝑝1,…,𝑝𝑘−1.\n" ++
+          "\tUso: Asegurar que una vez alcanzado un estado particular, se mantiene una secuencia estable de eventos."
+        )
+      "repeatG" ->(
+          repeatG m,
+          "\n\tφrepeat,n = G(p0→F(p1∧F(p2∧…Fpn−1)))\n\n" ++
+          "\tPropiedad de Repetición Periódica:\n" ++
+          "\tInterpretación: Si 𝑝0 es verdadero, entonces eventualmente ocurrirá 𝑝1, seguido de 𝑝2, y así sucesivamente hasta 𝑝𝑛−1, repetidamente.\n" ++
+          "\tUso: Verificar que una secuencia de eventos ocurre de forma cíclica o periódica."
+        )
+      "altG" ->(
+          altG m,
+          "\n\tφalt,m = G(p0→(Fp1∨Fp2∨…∨Fpm−1))\n\n" ++
+          "\tPropiedad de Alternancia:\n" ++
+          "\tInterpretación: Si 𝑝0 es verdadero, eventualmente uno de 𝑝1,𝑝2,…,𝑝𝑚−1 será verdadero.\n" ++
+          "\tUso: Especificar que después de un evento inicial, al menos una de varias opciones posibles debe ocurrir."
+        )
+      "cicloCompletoG" ->(
+          cicloCompletoG m,
+          "\n\tφcycle,n = G((p0∧Xp1∧…∧X^(n−1)pn−1)→X^np0\n\n" ++
+          "\tPropiedad de Alternancia:\n" ++
+          "\tInterpretación: Después de una secuencia completa de 𝑝0,𝑝1,…,𝑝𝑛−1, el ciclo se repite desde 𝑝0.\n" ++
+          "\tUso: Modelar ciclos completos de eventos que se repiten indefinidamente."
+        )
+      _ -> (St bot, "")

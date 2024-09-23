@@ -28,3 +28,12 @@ statesbin n = completeZeros n <$> take (2^n) bins
                           if   m < n'
                           then bs ++ replicate (n'-m) False
                           else bs
+
+
+cycleKS::Int->KripkeS
+cycleKS n = KS (r, l)
+  where
+    r i
+      | i < n     = [(i + 1) `mod` n]
+      | otherwise = []
+    l s p = s >= 0 && s < n && p == 'p' : show s
