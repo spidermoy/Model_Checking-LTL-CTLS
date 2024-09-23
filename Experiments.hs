@@ -2,7 +2,6 @@ module Experiments where
 
 import Data.List(sort, nub)
 import Data.Set(singleton)
-import Data.Functor((<&>))
 import System.Random(mkStdGen, randomIO, randoms, randomR, randomRs)
 import Control.Monad(forM_, replicateM_, when)
 import Data.Time(getCurrentTime, diffUTCTime)
@@ -194,7 +193,7 @@ ltlExperiment ks_type n specification m nuXmv =
     putStrLn descr
     ks_n <- case ks_type of
       "cycleKS"  -> return $ cycleKS n
-      "randomKS" -> randomIO <&> randomKS n . randoms . mkStdGen
+      "randomKS" -> randomKS n . randoms . mkStdGen <$> randomIO
       _          -> return $ KS (const [], \_ _ -> False)
     when nuXmv (do
         putStrLn "\n[Writing nuXmv file...]"

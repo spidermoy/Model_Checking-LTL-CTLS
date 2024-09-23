@@ -1,7 +1,6 @@
 module Core where
 
 import Data.Set(Set, singleton, delete, insert, map, empty, elemAt, toList, member)
-import Data.Functor((<&>))
 import Control.Monad(when, forM_)
 import Control.Exception(catch, ErrorCall(ErrorCall))
 import StateMonad(StateM(..), evalStateM)
@@ -160,7 +159,6 @@ insertVp::Assertion->StateM Vp ()
 insertVp σ = ST $ \v -> ((), insert σ v)
 
 
-
 mcALTL::KripkeS->Assertion->StateM Vp Bool
 mcALTL ks' σ' = dfs ks' σ' []
   where
@@ -180,7 +178,7 @@ mcALTL ks' σ' = dfs ks' σ' []
           T       -> insertVp σ >> return True
           Subg σs -> case σs of
             [] -> return False
-            _  -> sequence [dfs ks σ'' (σ:stack) | σ'' <- σs] <&> and
+            _  -> and <$> sequence [dfs ks σ'' (σ:stack) | σ'' <- σs]
 
 
 updR::KripkeS->State->[State]->KripkeS
@@ -213,7 +211,7 @@ mcALTLc ks' σ_ = dfs ks' σ_ []
           T       -> insertVp σ >> return True
           Subg σs -> case σs of
             [] -> finiteC stack
-            _  -> sequence [dfs ks σ₁ (σ:stack) | σ₁ <- σs] <&> and
+            _  -> and <$> sequence [dfs ks σ₁ (σ:stack) | σ₁ <- σs]
     finiteC::[Assertion]->a
     finiteC as = case as of
       ((Assrt (s, _Φ)):stack) -> error $
