@@ -188,7 +188,10 @@ ltlExperiment ks_type n specification m nuXmv =
   then do
     putStrLn $ "\nEstructura de Kripke: " ++ ks_type ++ "(" ++ show n ++ ")"
     let (φ_m, descr) = ltl_experiment specification
-    putStrLn $ "Experimento: " ++ show φ_m
+    putStrLn $ "Experimento: " ++ let φ_m_s = show φ_m in
+                                  if   m > 80
+                                  then take 150 φ_m_s ++ "..."
+                                  else φ_m_s
     putStrLn descr
     ks_n <- case ks_type of
       "cycleKS"  -> return $ cycleKS n
