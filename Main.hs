@@ -27,8 +27,8 @@ main = do
     ["thesis-experiments"]                                                           -> thesisExperiments
     -- Examples in “LOGIC IN COMPUTER SCIENCE, Modelling and Reasoning about Systems”.
     ["examples"]                                                                     -> examples
-    ["LTL-experiment", ks_type, n, specification, m]                                  -> ltlExperiment ks_type (read n) specification (read m) False
-    ["LTL-experiment", ks_type, n, specification, m, "nuXmv"]                         -> ltlExperiment ks_type (read n) specification (read m) True
+    ["LTL-experiment", ks_type, n, specification, m]                                 -> ltlExperiment ks_type (read n) specification (read m) False
+    ["LTL-experiment", ks_type, n, specification, m, "nuXmv"]                        -> ltlExperiment ks_type (read n) specification (read m) True
     _                                                                                -> putStrLn "opción no válida"
   where
     random_exp experiment n_vars forms_n nuXmv = case experiment of

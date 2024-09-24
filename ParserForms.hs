@@ -37,16 +37,16 @@ traduceS f = case f of
   ConjS f1 f2 -> "(" ++ traduceS f1 ++ ") & (" ++ traduceS f2 ++ ")"
   DisyS f1 f2 -> "(" ++ traduceS f1 ++ ") | (" ++ traduceS f2 ++ ")"
   A pf        -> "A" ++ case pf of
-    X _     -> traduceP pf
-    U f1 f2 -> if   f1 == St top
-               then "F (" ++ traduceP f2 ++ ")"
-               else "[" ++ traduceP f1 ++ " U " ++ traduceP f2 ++ "]"
-    V _ f2  -> "G (" ++ traduceP f2 ++ ")"
-    _       -> ""
+    X _       -> traduceP pf
+    U f1 f2   -> if   f1 == St top
+                 then "F (" ++ traduceP f2 ++ ")"
+                 else "["   ++ traduceP f1 ++ " U " ++ traduceP f2 ++ "]"
+    V _ f2    -> "G (" ++ traduceP f2 ++ ")"
+    _         -> ""
   E pf        -> "E" ++ case pf of
-    X _     -> traduceP pf
-    U f1 f2 -> if   f1 == St top
-               then "F (" ++ traduceP f2 ++ ")"
-               else "[" ++ traduceP f1 ++ " U " ++ traduceP f2 ++ "]"
-    V _ f2  -> "G (" ++ traduceP f2 ++")"
-    _       -> ""
+    X _       -> traduceP pf
+    U f1 f2   -> if   f1 == St top
+                 then "F (" ++ traduceP f2 ++ ")"
+                 else "["   ++ traduceP f1 ++ " U " ++ traduceP f2 ++ "]"
+    V _ f2    -> "G (" ++ traduceP f2 ++")"
+    _         -> ""

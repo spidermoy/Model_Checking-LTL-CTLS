@@ -57,16 +57,15 @@ seedsExperiment::TypeExperiment->(Int,Int,Int,Int)->Int->Int->Bool->IO ()
 seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
   let vars = ["p" ++ show j | j <- [0 .. n-1]] in
   do
-    let suc_ks = randoms (mkStdGen ranKS) :: [Int]
+    let suc_ks = randoms (mkStdGen ranKS)
         k      = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
-        inits  = sort $ take k $ nub $ randomRs (0, 2^n - 1 :: Int) (mkStdGen ranInit)
+        inits  = sort $ take k $ nub $ randomRs (0, 2^n - 1) (mkStdGen ranInit)
         states = [0 .. (2^n - 1)]
         ks     = randomKS n suc_ks
     putStrLn $ "\nKripke structure size: 2^" ++ show n
     putStrLn $ "Formulas depth: "            ++ show lforms
     putStrLn $ "Initial states number: "     ++ show k
-    str <- newEmptyMVar
-    run_experiment experiment vars inits states ks str
+    newEmptyMVar >>= run_experiment experiment vars inits states ks
   where
     run_experiment exp' vars inits states ks str =
       let forms = random_forms exp' in
@@ -200,9 +199,8 @@ ltlExperiment ks_type n specification m nuXmv =
         writeNuXmv ks_n (if ks_type == "randomKS" then [0 .. (2^n - 1)] else [0 .. n-1]) [0] ["p" ++ show j | j <- [0 .. n-1]] (Left [φ_m]) m (0, 0, 0, 0)
         putStrLn "[nuXmv file was written]\n"
       )
-    putStr "\n\tmcALTL: "
     start <- getCurrentTime
-    print $ evalMcALTL ks_n (Assrt (0, singleton φ_m))
+    putStr "\n\tmcALTL: " >> print (evalMcALTL ks_n (Assrt (0, singleton φ_m)))
     end   <- getCurrentTime
     putStrLn $ "\n\tVerification time: " ++ show (diffUTCTime end start) ++ "\n"
     when nuXmv nuXmvExperiment
@@ -242,28 +240,28 @@ ltlExperiment ks_type n specification m nuXmv =
           "\tInterpretación: Nunca ocurre una secuencia de 𝑚 estados consecutivos donde primero 𝑞0 es verdadero, seguido de 𝑞1, y así sucesivamente hasta 𝑞𝑚−1.\n" ++
           "\tUso: Prevenir secuencias peligrosas o indeseadas de eventos en el sistema."
         )
-      "permGF" ->(
+      "permGF" -> (
           permGF m,
           "\n\tφperm,k = G(Fp0→G(p0∧X(p1∧X(…Xpk−1))))\n\n" ++
           "\tPropiedad de Permanencia:\n" ++
           "\tInterpretación: Si 𝑝0 es verdadero alguna vez, entonces siempre habrá una secuencia repetida de 𝑝0,𝑝1,…,𝑝𝑘−1.\n" ++
           "\tUso: Asegurar que una vez alcanzado un estado particular, se mantiene una secuencia estable de eventos."
         )
-      "repeatG" ->(
+      "repeatG" -> (
           repeatG m,
           "\n\tφrepeat,n = G(p0→F(p1∧F(p2∧…Fpn−1)))\n\n" ++
           "\tPropiedad de Repetición Periódica:\n" ++
           "\tInterpretación: Si 𝑝0 es verdadero, entonces eventualmente ocurrirá 𝑝1, seguido de 𝑝2, y así sucesivamente hasta 𝑝𝑛−1, repetidamente.\n" ++
           "\tUso: Verificar que una secuencia de eventos ocurre de forma cíclica o periódica."
         )
-      "altG" ->(
+      "altG" -> (
           altG m,
           "\n\tφalt,m = G(p0→(Fp1∨Fp2∨…∨Fpm−1))\n\n" ++
           "\tPropiedad de Alternancia:\n" ++
           "\tInterpretación: Si 𝑝0 es verdadero, eventualmente uno de 𝑝1,𝑝2,…,𝑝𝑚−1 será verdadero.\n" ++
           "\tUso: Especificar que después de un evento inicial, al menos una de varias opciones posibles debe ocurrir."
         )
-      "cicloCompletoG" ->(
+      "cicloCompletoG" -> (
           cicloCompletoG m,
           "\n\tφcycle,n = G((p0∧Xp1∧…∧X^(n−1)pn−1)→X^np0\n\n" ++
           "\tPropiedad de Alternancia:\n" ++

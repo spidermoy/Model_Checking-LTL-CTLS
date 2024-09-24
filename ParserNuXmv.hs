@@ -7,7 +7,7 @@ import ParserForms(pathFormsToFile, stateFormsToFile)
 writeNuXmv::KripkeS->[State]->[State]->[String]->Either [PathF] [StateF]->Int->(Int,Int,Int,Int)->IO ()
 writeNuXmv (KS (r, l)) states inits vars forms lforms (ranInit, ranNumInit, ranKS, ranF) =
   writeFile smvOutput $
-    ("-- init seed: "             ++ show ranInit)    ++
+    ("-- init seed: "               ++ show ranInit)    ++
     ("\n-- NumInit seed: "          ++ show ranNumInit) ++
     ("\n-- KS seed: "               ++ show ranKS)      ++
     ("\n-- F seed: "                ++ show ranF)       ++
@@ -38,7 +38,7 @@ writeNuXmv (KS (r, l)) states inits vars forms lforms (ranInit, ranNumInit, ranK
                         s':ss -> "s" ++ show s' ++ "|" ++ g' ss
                         _     -> ""
                      f'' sts = case sts of
-                        [s]   -> "(s" ++ show s ++ " & next(" ++ (g' . r) s ++ "))\n\n"
+                        [s]   -> "(s" ++ show s  ++ " & next(" ++ (g' . r) s  ++ "))\n\n"
                         s':ss -> "(s" ++ show s' ++ " & next(" ++ (g' . r) s' ++ ")) |\n" ++ f'' ss
                         _     -> "" in
                  f'' states ++ (case forms of

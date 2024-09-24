@@ -37,17 +37,17 @@ kripkeSExample = KS (r, l)
 {- LTL examples from page 182. -}
 ltlExamples::[([Int], PathF)]
 ltlExamples = [
-    ([0], ConjP (St $ Var "p") (St $ Var "q")),
+    ([0], St (Var "p") `ConjP` St (Var "q")),
     ([0], St $ Neg "r"),
     ([0], St top),
     ([0], X $ St $ Var "r"),
-    ([0], X $ ConjP (St $ Var "q") (St $ Var "r")),
-    ([0], opG $ negP $ ConjP (St $ Var "p") (St $ Var "r")),
+    ([0], X $ St (Var "q") `ConjP` St (Var "r")),
+    ([0], opG $ negP $ St (Var "p") `ConjP` St (Var "r")),
     ([2], opG $ St $ Var "r"),
-    ([0, 1, 2], impP (opF $ ConjP (St $ Neg "q") (St $ Var "r")) (opF $ opG $ St $ Var "r")),
+    ([0, 1, 2], opF (St (Neg "q") `ConjP` St (Var "r")) `impP` opF (opG $ St $ Var "r")),
     ([0], opG $ opF $ St $ Var "p"),
-    ([0], impP (opG $ opF $ St $ Var "p") (opG $ opF $ St $ Var "r")),
-    ([0], impP (opG $ opF $ St $ Var "r") (opG $ opF $ St $ Var "p"))
+    ([0], opG (opF $ St $ Var "p") `impP` opG (opF $ St $ Var "r")),
+    ([0], opG (opF $ St $ Var "r") `impP` opG (opF $ St $ Var "p"))
   ]
 
 
@@ -57,15 +57,14 @@ ctlExamples = [
     (0, ConjS (Var "p") (Var "q")),
     (0, Neg "r"),
     (0, top),
-    (0, E $ X $ St $ ConjS (Var "q") (Var "r")),
-    (0, negS $ A $ X $ St $ ConjS (Var "q") (Var "r")),
-    (0, negS $ E $ opF $ St $ ConjS (Var "p") (Var "r")),
+    (0, E $ X $ St $ Var "q" `ConjS` Var "r"),
+    (0, negS $ A $ X $ St $ Var "q" `ConjS` Var "r"),
+    (0, negS $ E $ opF $ St $ Var "p" `ConjS` Var "r"),
     (2, E $ opG $ St $ Var "r"),
     (0, A $ opF $ St $ Var "r"),
-    (0, E $ U (St $ ConjS (Var "p") (Var "q")) (St $ Var "r")),
-    (0, A $ U (St $ Var "p") (St $ Var "r")),
-    (0, A $ opG $ St $ impS (DisyS (DisyS (Var "p") (Var "q")) (Var "r"))
-                            (E $ opF $ St $ E $ opG $ St $ Var "r"))
+    (0, E $ St (Var "p" `ConjS` Var "q") `U` St (Var "r")),
+    (0, A $ St (Var "p") `U` St (Var "r")),
+    (0, A $ opG $ St $ ((Var "p" `DisyS` Var "q") `DisyS` Var "r") `impS` E (opF $ St $ E $ opG $ St $ Var "r"))
   ]
 
 
@@ -80,13 +79,13 @@ examples = do
   putStrLn "\t L(1) = [q, r]"
   putStrLn "\t L(2) = [r]"
   putStrLn "\n\tLTL EXAMPLES:"
-  forM_ ltlExamples $ \(states, ф) -> forM_ states (\s -> do
+  forM_ ltlExamples $ \(states, ф) -> forM_ states $ \s -> do
     let σ = Assrt (s, singleton ф)
     putStr $ show σ ++ ": "
-    print $ evalMcALTL kripkeSExample σ)
+    print $ evalMcALTL kripkeSExample σ
   putStrLn "\n\tCTL EXAMPLES:"
-  forM_ ctlExamples (\(s, φ) -> do
+  forM_ ctlExamples $ \(s, φ) -> do
     putStr $ show (s, φ) ++ ": "
-    print $ evalMcCTLS kripkeSExample (s, φ))
+    print $ evalMcCTLS kripkeSExample (s, φ)
   putStrLn "\nExamples from:"
   putStrLn "Michael Huth & Mark Ryan, “LOGIC IN COMPUTER SCIENCE, Modelling and Reasoning about Systems”, Second Edition."
