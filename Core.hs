@@ -86,8 +86,7 @@ impP ф₁ ф₂ = if   ф₁ == ф₂
 {- States are integers. -}
 type State = Int
 
-{- A Kripke Structure is a triple (n, r, l). 'n' indicates the states range [0 .. n].
-   'r' is the transition function and 'l' maps states to variable sets. -}
+{- A Kripke Structure is a pair (r, l). 'r' is the transition function and 'l' maps states to variable sets. -}
 newtype KripkeS = KS (State->[State], State->(At->Bool))
 
 
@@ -295,7 +294,6 @@ smvOutput = "/home/moy/nuXmv/ejemplo_random.smv"
 
 instance Show Assertion where
    show (Assrt (s, _Φ)) = "s" ++ show s ++ " ⊢ " ++ show (toList _Φ)
-
 
 instance Show StateF where
   show sf = case sf of

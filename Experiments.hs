@@ -54,36 +54,34 @@ randomExperiment experiment n lforms nuXmv = do
 
 
 seedsExperiment::TypeExperiment->(Int,Int,Int,Int)->Int->Int->Bool->IO ()
-seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv =
-  let vars = ["p" ++ show j | j <- [0 .. n-1]] in
-  do
-    let suc_ks = randoms (mkStdGen ranKS)
-        k      = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
-        inits  = sort $ take k $ nub $ randomRs (0, 2^n - 1) (mkStdGen ranInit)
-        states = [0 .. (2^n - 1)]
-        ks     = randomKS n suc_ks
-    putStrLn $ "\nKripke structure size: 2^" ++ show n
-    putStrLn $ "Formulas depth: "            ++ show lforms
-    putStrLn $ "Initial states number: "     ++ show k
-    newEmptyMVar >>= run_experiment experiment vars inits states ks
+seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv = do
+  let vars = ["p" ++ show j | j <- [0 .. n-1]]
+      suc_ks = randoms (mkStdGen ranKS)
+      k      = fst $ randomR (1, 2^n) (mkStdGen ranNumInit)
+      inits  = sort $ take k $ nub $ randomRs (0, 2^n - 1) (mkStdGen ranInit)
+      states = [0 .. (2^n - 1)]
+      ks     = randomKS n suc_ks
+  putStrLn $ "\nKripke structure size: 2^" ++ show n
+  putStrLn $ "Formulas depth: "            ++ show lforms
+  putStrLn $ "Initial states number: "     ++ show k
+  newEmptyMVar >>= run_experiment experiment vars inits states ks
   where
-    run_experiment exp' vars inits states ks str =
-      let forms = random_forms exp' in
-      do
-        print_forms forms
-        when nuXmv (
-            do
-              putStrLn "\n[Writing nuXmv file...]"
-              writeNuXmv ks states inits vars forms lforms (ranInit, ranNumInit, ranKS, ranF)
-              putStrLn "[nuXmv file was written]\n"
-          )
-        print_type_experiment exp'
-        start <- getCurrentTime
-        callmc exp' forms ks inits str
-        when (experiment /= LTLc) (replicateM_ 3 (takeMVar str >>= putStrLn))
-        end <- getCurrentTime
-        putStrLn $ "\n\tVerification time: " ++ show (diffUTCTime end start) ++ "\n"
-        when nuXmv nuXmvExperiment
+    run_experiment exp' vars inits states ks str = do
+      let forms = random_forms exp'
+      print_forms forms
+      when nuXmv (
+          do
+            putStrLn "\n[Writing nuXmv file...]"
+            writeNuXmv ks states inits vars forms lforms (ranInit, ranNumInit, ranKS, ranF)
+            putStrLn "[nuXmv file was written]\n"
+        )
+      print_type_experiment exp'
+      start <- getCurrentTime
+      callmc exp' forms ks inits str
+      when (experiment /= LTLc) (replicateM_ 3 (takeMVar str >>= putStrLn))
+      end <- getCurrentTime
+      putStrLn $ "\n\tVerification time: " ++ show (diffUTCTime end start) ++ "\n"
+      when nuXmv nuXmvExperiment
     print_forms (Left fs)  = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
     print_forms (Right fs) = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
     callmc experiment' forms ks inits str = case experiment' of
@@ -111,10 +109,7 @@ nuXmvExperiment = do
   start        <- getCurrentTime
   salida_nuXmv <- readProcess nuXmvPath ["-dcx", smvOutput] []
   end          <- getCurrentTime
-  let salida_nuXmv_forms = let nuXmv_out_lines = lines salida_nuXmv
-                               nuXmv_out       = drop 26 nuXmv_out_lines in
-                           concat [l ++ "\n" | l <- nuXmv_out]
-  putStrLn salida_nuXmv_forms
+  putStrLn $ concat [l ++ "\n" | l <- drop 26 (lines salida_nuXmv)]
   putStrLn $ "\tVerification time: " ++ show (diffUTCTime end start)
 
 
@@ -197,11 +192,10 @@ ltlExperiment ks_type n specification m nuXmv =
       "cycleKS"  -> return $ cycleKS n
       "randomKS" -> randomKS n . randoms . mkStdGen <$> randomIO
       _          -> return $ KS (const [], \_ _ -> False)
-    when nuXmv (do
-        putStrLn "\n[Writing nuXmv file...]"
-        writeNuXmv ks_n (if ks_type == "randomKS" then [0 .. (2^n - 1)] else [0 .. n-1]) [0] ["p" ++ show j | j <- [0 .. n-1]] (Left [φ_m]) m (0, 0, 0, 0)
-        putStrLn "[nuXmv file was written]\n"
-      )
+    when nuXmv $ do
+      putStrLn "\n[Writing nuXmv file...]"
+      writeNuXmv ks_n (if ks_type == "randomKS" then [0 .. (2^n - 1)] else [0 .. n-1]) [0] ["p" ++ show j | j <- [0 .. n-1]] (Left [φ_m]) m (0, 0, 0, 0)
+      putStrLn "[nuXmv file was written]\n"
     start <- getCurrentTime
     putStr "\n\tmcALTL: " >> print (evalMcALTL ks_n (Assrt (0, singleton φ_m)))
     end   <- getCurrentTime

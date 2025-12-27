@@ -27,9 +27,9 @@ This verifier extends naturally to the CTL* temporal logic (and thus, to the CTL
 
 ## Requirements:
 
-* [GHC 9.4.8 (The Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
+* [GHC 9.6.7 (The Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
 * [Haskell Cabal](https://www.haskell.org/cabal/)
-* The new symbolic model checker [nuXmv](https://nuxmv.fbk.eu/)
+* The new symbolic model checker [nuXmv](https://nuxmv.fbk.eu/) Version 2.1.0 (November 29, 2024)
 (don't forget edit the location path in the file `Core.hs`).
 
 ## How to use:
