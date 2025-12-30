@@ -124,14 +124,16 @@ subgoals ks@(KS (r, _)) σ@(Assrt (s, _Φ)) =
          U ф₁ ф₂     -> if   ф₁ == ф₂ -- фUф ≡ ф
                         then Subg [insertF ф₁ $ deleteF ф σ]
                         -- ф₁Uф₂ ≡ (ф₁⋁ф₂)⋀(ф₂⋁(X(ф₁Uф₂)))
-                        else Subg [insertF ф₁ $ insertF ф₂ $ deleteF ф σ,
+                        else Subg [insertF ф₁ $ insertF ф₂    $ deleteF ф σ,
                                    insertF ф₂ $ insertF (X ф) $ deleteF ф σ]
          V ф₁ ф₂     -> if   ф₁ == ф₂ -- фVф ≡ ф
                         then Subg [insertF ф₁ $ deleteF ф σ]
                         -- ф₁Vф₂ ≡ ф₂⋀(ф₁⋁(X(ф₁Vф₂)))
                         else Subg $ if   ф₁ == St bot
-                                    then [insertF ф₂ $ deleteF ф σ, insertF (X ф) $ deleteF ф σ]
-                                    else [insertF ф₂ $ deleteF ф σ, insertF ф₁ $ insertF (X ф) $ deleteF ф σ]
+                                    then [insertF ф₂    $ deleteF ф σ,
+                                          insertF (X ф) $ deleteF ф σ]
+                                    else [insertF ф₂ $ deleteF ф σ,
+                                          insertF ф₁ $ insertF (X ф) $ deleteF ф σ]
          X _         -> -- (Xф₁)⋁(Xф₂)⋁ ⋯ ⋁(Xф_n) ≡ X(ф₁⋁ф₂⋁ ⋯ ⋁ф_n)
                         let _Φ' = Data.Set.map (\(X ф') -> ф') _Φ in
                         Subg [Assrt (s', _Φ') | s' <- r s]
@@ -229,9 +231,9 @@ mcALTLc ks' σ_ = dfs ks' σ_ []
 
 
 evalMcALTLc::KripkeS->Assertion->IO ()
-evalMcALTLc ks σ = catch
-  (print $ evalStateM (mcALTLc ks σ) empty)
-  (\(ErrorCall counterexample) -> putStrLn counterexample)
+evalMcALTLc ks σ = catch (
+    print $ evalStateM (mcALTLc ks σ) empty
+  ) (\(ErrorCall counterexample) -> putStrLn counterexample)
 
 
 mcALTLcSet::KripkeS->[State]->PathF->IO ()

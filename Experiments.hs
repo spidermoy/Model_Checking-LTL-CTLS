@@ -37,7 +37,7 @@ import RandomKS(randomKS, cycleKS)
 import ParserNuXmv(writeNuXmv)
 
 
-data TypeExperiment = LTL | LTLc | CTL deriving Eq
+data TypeExperiment = LTL | LTLc | CTL deriving (Show, Eq)
 
 
 randomExperiment::TypeExperiment->Int->Int->Bool->IO ()
@@ -69,31 +69,24 @@ seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv = d
     run_experiment exp' vars inits states ks str = do
       let forms = random_forms exp'
       print_forms forms
-      when nuXmv (
-          do
-            putStrLn "\n[Writing nuXmv file...]"
-            writeNuXmv ks states inits vars forms lforms (ranInit, ranNumInit, ranKS, ranF)
-            putStrLn "[nuXmv file was written]\n"
-        )
+      when nuXmv $ do
+        putStrLn "\n[Writing nuXmv file...]"
+        writeNuXmv ks states inits vars forms lforms (ranInit, ranNumInit, ranKS, ranF)
+        putStrLn "[nuXmv file was written]\n"
       print_type_experiment exp'
       start <- getCurrentTime
       callmc exp' forms ks inits str
-      when (experiment /= LTLc) (replicateM_ 3 (takeMVar str >>= putStrLn))
+      when (experiment /= LTLc) $ replicateM_ 3 (takeMVar str >>= putStrLn)
       end <- getCurrentTime
       putStrLn $ "\n\tVerification time: " ++ show (diffUTCTime end start) ++ "\n"
       when nuXmv nuXmvExperiment
     print_forms (Left fs)  = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
     print_forms (Right fs) = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
-    callmc experiment' forms ks inits str = case experiment' of
-      LTL  -> let Left fs  = forms in
-              forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcALTLSet ks inits f)
-      LTLc -> let Left fs  = forms in
-              forM_ fs (\f -> do
-                  putStr $ "-- specification " ++ show f ++ " : "
-                  mcALTLcSet ks inits f
-               )
-      CTL  -> let Right fs = forms in
-              forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcCTLSSet (ks, inits) f)
+    callmc experiment' forms ks inits str = case (experiment', forms) of
+      (LTL,  Left  fs) -> forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcALTLSet ks inits f)
+      (LTLc, Left  fs) -> forM_ fs $ \f -> putStr ("-- specification " ++ show f ++ " : ") >> mcALTLcSet ks inits f
+      (CTL,  Right fs) -> forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcCTLSSet (ks, inits) f)
+      _                -> putStrLn $ "Experimento no válido: " ++ show (experiment', forms)
     print_type_experiment exp' = case exp' of
       LTL  -> putStrLn "\n\tmcALTL:\n"
       LTLc -> putStrLn "\n\tmcALTLc:\n"
