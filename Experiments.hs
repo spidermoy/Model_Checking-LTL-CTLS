@@ -82,10 +82,11 @@ seedsExperiment experiment (ranInit, ranNumInit, ranKS, ranF) n lforms nuXmv = d
       when nuXmv nuXmvExperiment
     print_forms (Left fs)  = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
     print_forms (Right fs) = putStrLn $ "Specifications: " ++ concatMap (("\n\t• "<>) . show) fs <> "\n"
+    printResult b = if b then "✅" else "❌"
     callmc experiment' forms ks inits str = case (experiment', forms) of
-      (LTL,  Left  fs) -> forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcALTLSet ks inits f)
+      (LTL,  Left  fs) -> forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ printResult (mcALTLSet ks inits f)
       (LTLc, Left  fs) -> forM_ fs $ \f -> putStr ("-- specification " ++ show f ++ " : ") >> mcALTLcSet ks inits f
-      (CTL,  Right fs) -> forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ show (mcCTLSSet (ks, inits) f)
+      (CTL,  Right fs) -> forM_ fs $ \f -> forkIO $ putMVar str $ "-- specification " ++ show f ++ " : " ++ printResult (mcCTLSSet (ks, inits) f)
       _                -> putStrLn $ "Experimento no válido: " ++ show (experiment', forms)
     print_type_experiment exp' = case exp' of
       LTL  -> putStrLn "\n\tmcALTL:\n"

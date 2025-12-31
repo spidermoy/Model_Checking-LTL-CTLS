@@ -232,8 +232,8 @@ mcALTLc ks' σ_ = dfs ks' σ_ []
 
 evalMcALTLc::KripkeS->Assertion->IO ()
 evalMcALTLc ks σ = catch (
-    print $ evalStateM (mcALTLc ks σ) empty
-  ) (\(ErrorCall counterexample) -> putStrLn counterexample)
+    when (evalStateM (mcALTLc ks σ) empty) $ putStrLn "✅"
+  ) (\(ErrorCall counterexample) -> putStrLn $ "❌ " ++ counterexample)
 
 
 mcALTLcSet::KripkeS->[State]->PathF->IO ()
