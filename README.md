@@ -55,8 +55,8 @@ _n_ and _m_ are positive integers.
    * Run the experiments in my thesis: `cabal new-run model-check thesis-experiments`
    * (**NEW**) Run an LTL experiment using parameterized formulas (m) over circular or random Kripke structures (n):
 
-   `cabal new-run model-check LTL-experiment cycleKS n experiment m (nuXmv)`
+   `cabal new-run model-check LTL-experiment ks n experiment m (nuXmv)`
 
-   _n_ ≥ _m_, and  _experiment_ ∊ [`fmTimesX`, `securityG`, `vivacidadF`, `progresoG`, `safeG`, `permGF`, `repeatG`, `altG`, `cicloCompletoG`]
+   _n_ ≥ _m_, _ks_ ∊ [`cycleKS`, `randomKS`],and  _experiment_ ∊ [`fmTimesX`, `securityG`, `vivacidadF`, `progresoG`, `safeG`, `permGF`, `repeatG`, `altG`, `cicloCompletoG`]
 
 ###### [This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains an implementation of Bhat, Cleaveland and Grumberg original algorithm.
