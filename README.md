@@ -53,5 +53,10 @@ _n_ and _m_ are positive integers.
    * Run a specific LTL or CTL experiment by using their initial seeds comparing with nuXmv: `cabal new-run -- model-check seeds nuXmv ranInit ranNumInit ranKS ranF [LTL or CTL] n m`
    * Run simple LTL and CTL examples: `cabal new-run model-check examples`
    * Run the experiments in my thesis: `cabal new-run model-check thesis-experiments`
+   * (**NEW**) Run an LTL experiment using parameterized formulas (m) over circular or random Kripke structures (n):
+
+   `cabal new-run model-check LTL-experiment cycleKS n experiment m (nuXmv)`
+
+   _n_ ≥ _m_, and  _experiment_ ∊ [`fmTimesX`, `securityG`, `vivacidadF`, `progresoG`, `safeG`, `permGF`, `repeatG`, `altG`, `cicloCompletoG`]
 
 ###### [This repository](https://github.com/spidermoy/OnTheFly_ModelChecking) contains an implementation of Bhat, Cleaveland and Grumberg original algorithm.
